@@ -1,0 +1,646 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Logo from '@/components/Logo.astro';
+import LeafField from '@/components/LeafField.astro';
+import Icon from '@/components/Icon.astro';
+import Button from '@/components/Button.astro';
+import Counter from '@/components/Counter.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import Disclosure from '@/components/Disclosure.astro';
+import ProgrammeCard from '@/components/ProgrammeCard.astro';
+import SkewCard from '@/components/SkewCard.astro';
+import CampCard from '@/components/CampCard.astro';
+import VoiceCard from '@/components/VoiceCard.astro';
+import NetworkMap from '@/components/NetworkMap.astro';
+import DonateBand from '@/components/DonateBand.astro';
+
+import { site, clinic } from '@/data/site';
+import { headline, growth, reports, source } from '@/data/stats';
+import { programmes } from '@/data/programmes';
+import { chapters, cities, cabinetCities } from '@/data/chapters';
+import { labelStep, partnerGroups, partnerTotal } from '@/data/partners';
+import { voices } from '@/data/voices';
+
+import clinicPhoto from '@/assets/photos/volunteers-clinic.jpg';
+
+const camps = (await getCollection('camps')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const recentCamps = camps.filter((c) => c.data.featured).slice(0, 3);
+const stories = (await getCollection('stories')).slice(0, 4);
+const featuredVoices = voices.filter((v) => v.featured);
+
+const cabinetCityCount = cabinetCities.length;
+// RAVISH publishes "25+ major cities covered" in IMPACT 2025, and its own
+// "Our Presence" slide names 26. We plot 27, because Gujrat holds a cabinet
+// but is absent from their list (which names Gujranwala instead). Quote their
+// published figure in copy; let the map caption state what it actually plots.
+const publishedCityCount = '25+';
+const plottedCityCount = cities.length;
+const maxMultiple = Math.max(...growth.map((g) => g.multiple));
+---
+
+<BaseLayout title="RAVISH — The path of health, a right for all" bare>
+  <!-- ============================================================
+       1 — HERO
+       ============================================================ -->
+  <section class="band-paper band-hero relative overflow-hidden" aria-labelledby="hero-title">
+    <LeafField count={22} />
+
+    <div class="shell relative w-full">
+      <div class="grid items-center gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+        <div>
+          <div class="flex items-center gap-4" data-reveal="scale">
+            <span class="badge-ring shrink-0">
+              <Logo variant="badge" size={88} class="hero-badge rounded-full" />
+            </span>
+            <div class="flex flex-col gap-1">
+              <span class="eyebrow text-crimson">Founded {site.founded}</span>
+              <span class="text-caption text-muted">{site.college}</span>
+            </div>
+          </div>
+
+          <p lang="ur" class="urdu-tagline mt-hero-sm text-crimson" data-reveal="rise" style="--reveal-delay:80">
+            {site.tagline}
+          </p>
+
+          <!-- each line rises out of its own mask, one after the other -->
+          <h1 id="hero-title" class="hero-title mt-hero-xs max-w-[20ch] text-ash" data-reveal="fade">
+            <span class="line-mask" style="--line-i:0"><span>The path of health —</span></span>
+            <span class="line-mask" style="--line-i:1"><span class="sweep-text">a right for all.</span></span>
+          </h1>
+
+          <div
+            class="rule-sunrise mt-hero-sm"
+            style="max-width:9rem;--reveal-delay:320"
+            data-reveal="line"
+            aria-hidden="true"
+          >
+          </div>
+
+          <p class="hero-lead measure mt-hero" data-reveal="rise" style="--reveal-delay:380">
+            RAVISH is a student-led healthcare organisation founded by medical students in Lahore. We run
+            free medical camps, a permanent free clinic and nationwide relief work — and we have treated
+            more than fifteen thousand patients doing it.
+          </p>
+
+          <div class="mt-hero flex flex-wrap items-center gap-3" data-reveal="rise" style="--reveal-delay:450">
+            <Button href="/donate" size="lg" icon="arrowRight">Donate</Button>
+            <Button href="/get-involved/volunteer" variant="outline" size="lg">Volunteer</Button>
+          </div>
+
+          <p
+            class="mt-hero-sm flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-muted"
+            data-reveal="fade"
+            style="--reveal-delay:520"
+          >
+            <span>Founded 2024</span>
+            <span aria-hidden="true" class="text-line">·</span>
+            <span>{chapters.filter((c) => !c.dormant).length}+ local cabinets</span>
+            <span aria-hidden="true" class="text-line">·</span>
+            <span>{publishedCityCount} cities covered</span>
+            <span aria-hidden="true" class="text-line">·</span>
+            <span>Lahore</span>
+          </p>
+        </div>
+
+        <!-- the pull quote that explains the name, set as a figure -->
+        <aside class="relative hidden lg:block" data-reveal="rise-lg" style="--reveal-delay:340">
+          <div class="glass-card relative p-8">
+            <p class="eyebrow text-crimson">What Ravish means</p>
+            <p class="display-quote mt-4 text-ash">
+              A pavement built on kindness, and a journey where every step leads to hope.
+            </p>
+            <p class="mt-5 text-small leading-relaxed text-muted">
+              It is the bridge between those who wish to give and those who need to receive — a movement
+              that turns empathy into action.
+            </p>
+            <div class="mt-6 flex items-center gap-3 border-t border-line pt-5">
+              <span lang="ur" class="text-[1.5rem] text-crimson" style="line-height:2">روش</span>
+              <span class="text-caption text-muted">
+                <em>Ravish</em> — a path, a pavement
+              </span>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <a href="#impact-strip-title" class="scroll-cue mt-hero hidden md:inline-flex" data-reveal="fade" style="--reveal-delay:620">
+        <span class="scroll-cue-track" aria-hidden="true"></span>
+        Scroll to see the impact
+      </a>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       2 — IMPACT STRIP (crimson silk)
+       ============================================================ -->
+  <section class="band-silk band-tight relative" aria-labelledby="impact-strip-title">
+    <span class="silk-weave" aria-hidden="true"></span>
+
+    <div class="shell">
+      <div class="flex flex-wrap items-baseline justify-between gap-4">
+        <h2 id="impact-strip-title" class="eyebrow text-gold-light">Since March 2024</h2>
+        <p class="text-caption text-paper/92">
+          Source: RAVISH {source.label}, published {source.published}
+        </p>
+      </div>
+
+      <div class="mt-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        {headline.map((stat, i) => <Counter {...stat} tone="gold" delay={i * 90} />)}
+      </div>
+
+      <div class="mt-12 flex flex-wrap gap-3" data-reveal="rise" style="--reveal-delay:380">
+        <Button href="/impact" variant="on-silk" icon="arrowRight">See the full impact</Button>
+        <Button href="/impact#reports" variant="quiet" iconStart="download">Impact reports</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       3 — WHAT RAVISH MEANS
+       ============================================================ -->
+  <section class="band-paper band" aria-labelledby="meaning-title">
+    <div class="shell-narrow">
+      <p class="eyebrow text-crimson" data-reveal="rise">The name</p>
+
+      <blockquote class="mt-7" data-reveal="rise" style="--reveal-delay:80">
+        <p id="meaning-title" class="display-h1 text-crimson">
+          The literal meaning of the word is a path, a pavement.
+        </p>
+        <p class="lead mt-7 text-ash">
+          A pavement built on kindness, and a journey where every step leads to hope. It is the bridge
+          between those who wish to give and those who need to receive, a movement that turns empathy into
+          action. Through every effort, every hand extended, and every life touched, Ravish becomes more
+          than just a name.
+        </p>
+        <footer class="mt-7 text-caption text-muted">RAVISH, 5 September 2025</footer>
+      </blockquote>
+
+      <div class="mt-14 grid gap-8 sm:grid-cols-2" data-reveal="rise" style="--reveal-delay:140">
+        <div class="border-l-2 border-crimson/20 pl-6">
+          <h3 class="display-h3 text-crimson">Our mission</h3>
+          <p class="mt-3 text-small leading-relaxed text-ash">
+            To provide free and quality healthcare to underserved communities while empowering youth to
+            lead with responsibility and compassion.
+          </p>
+        </div>
+        <div class="border-l-2 border-crimson/20 pl-6">
+          <h3 class="display-h3 text-crimson">Our vision</h3>
+          <p class="mt-3 text-small leading-relaxed text-ash">
+            A healthier and more just Pakistan, where access to healthcare is a right and young leaders
+            drive sustainable social change.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       4 — RAVISH CLINIC ★
+       ============================================================ -->
+  <section class="band-paper-deep band relative overflow-hidden" aria-labelledby="clinic-title">
+    <div class="shell">
+      <div class="grid items-center gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
+        <div>
+          <p class="eyebrow text-crimson" data-reveal="rise">The biggest thing we have built</p>
+          <h2 id="clinic-title" class="display-h1 mt-4 text-crimson" data-reveal="rise" style="--reveal-delay:70">
+            The RAVISH Clinic
+          </h2>
+          <div
+            class="rule-sunrise mt-6"
+            style="max-width:6rem;--reveal-delay:140"
+            data-reveal="line"
+            aria-hidden="true"
+          >
+          </div>
+
+          <p class="lead measure mt-7" data-reveal="rise" style="--reveal-delay:190">
+            A camp can screen five hundred people in a day and find dozens with high blood pressure or
+            high blood sugar. Until September 2025, there was nowhere free to send them.
+          </p>
+          <p class="mt-5 measure text-body text-ash" data-reveal="rise" style="--reveal-delay:240">
+            Now there is. The clinic opened on {clinic.opened} and runs weekly — consultations,
+            follow-ups and basic diagnostics, free. It is what turns a series of one-day camps into
+            continuous care, and it is the reason the whole programme holds together.
+          </p>
+
+          <dl class="mt-9 grid gap-5 sm:grid-cols-2" data-reveal="rise" style="--reveal-delay:290">
+            <div>
+              <dt class="eyebrow text-muted">Opened</dt>
+              <dd class="mt-1.5 text-small font-medium text-ash">{clinic.opened}</dd>
+            </div>
+            <div>
+              <dt class="eyebrow text-muted">Runs</dt>
+              <dd class="mt-1.5 text-small font-medium text-ash">Weekly</dd>
+            </div>
+            <div class="sm:col-span-2">
+              <dt class="eyebrow text-muted">Where</dt>
+              <dd class="mt-1.5 text-small font-medium text-ash">{clinic.address}</dd>
+            </div>
+            <div class="sm:col-span-2">
+              <dt class="eyebrow text-muted">Established with</dt>
+              <dd class="mt-1.5 text-small font-medium text-ash">
+                {clinic.partner} — {clinic.partnerRole}
+              </dd>
+            </div>
+          </dl>
+
+          <div class="mt-9 flex flex-wrap gap-3" data-reveal="rise" style="--reveal-delay:340">
+            <Button href="/clinic" icon="arrowRight">Visit the clinic page</Button>
+            <Button href="/get-involved/volunteer" variant="outline">Volunteer at the clinic</Button>
+          </div>
+        </div>
+
+        <figure class="m-0" data-reveal="rise-lg" style="--reveal-delay:180">
+          <div class="img-frame card overflow-hidden rounded-[18px] p-0">
+            <Image
+              src={clinicPhoto}
+              alt="RAVISH volunteers in white coats at the clinic in Lahore"
+              widths={[400, 640]}
+              sizes="(min-width:1024px) 40vw, 90vw"
+              quality={82}
+              class="aspect-[4/3] w-full object-cover"
+            />
+          </div>
+          <figcaption class="mt-4 flex items-start gap-2.5 text-caption text-muted">
+            <Icon name="pin" size={14} class="mt-0.5 shrink-0 text-saffron" />
+            <span>
+              The clinic team, Androon Lahore. {clinic.doctor} has attended since {clinic.doctorSince}.
+            </span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       5 — WHAT WE DO (8 programmes, see-more)
+       ============================================================ -->
+  <section class="band-paper band" aria-labelledby="programmes-title">
+    <div class="shell">
+      <SectionHead
+        id="programmes-title"
+        eyebrow="What we do"
+        title="Eight programmes, one pathway"
+        lead="Screening finds the problem, the camp treats what it can, and the clinic follows up on the rest. Everything else — education, welfare, relief — exists because the same communities need it."
+      />
+
+      <div class="mt-14">
+        <Disclosure peek="34rem" moreLabel="Show all eight programmes" lessLabel="Show fewer" count="4 more" veil="paper">
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {programmes.map((p, i) => <ProgrammeCard programme={p} index={i} />)}
+          </div>
+        </Disclosure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       6 — THE NETWORK ★
+       ============================================================ -->
+  <section class="band-paper-deep band" aria-labelledby="network-title">
+    <div class="shell">
+      <div class="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+        <div>
+          <SectionHead
+            id="network-title"
+            eyebrow="The network"
+            title="Forty cabinets, one per college"
+            lead="Every cabinet is a medical college running its own camps, its own awareness drives and its own webinars, under one name. It is the reason RAVISH can be in Gilgit and Karachi in the same week."
+          />
+
+          <div class="mt-10 grid gap-6 sm:grid-cols-3">
+            <div data-reveal="rise">
+              <p class="numeral">{chapters.filter((c) => !c.dormant).length}</p>
+              <p class="mt-2 text-small font-medium text-ash">local cabinets</p>
+            </div>
+            <div data-reveal="rise" style="--reveal-delay:80">
+              <p class="numeral">{cabinetCityCount}</p>
+              <p class="mt-2 text-small font-medium text-ash">cities with a cabinet</p>
+            </div>
+            <div data-reveal="rise" style="--reveal-delay:160">
+              <p class="numeral">{publishedCityCount}</p>
+              <p class="mt-2 text-small font-medium text-ash">cities covered</p>
+            </div>
+          </div>
+
+          <p class="mt-8 max-w-[52ch] text-small leading-relaxed text-muted" data-reveal="rise" style="--reveal-delay:220">
+            Those last two numbers are different things, and both are true. A cabinet is based in
+            {' '}{cabinetCityCount} cities. Camps run in far more — the difference is every place a
+            cabinet travelled to work but where no chapter has been founded yet. The map plots
+            {' '}{plottedCityCount} named cities.
+          </p>
+
+          <div class="mt-9 flex flex-wrap gap-3" data-reveal="rise" style="--reveal-delay:280">
+            <Button href="/chapters" icon="arrowRight">Browse all cabinets</Button>
+            <Button href="/get-involved/cabinets" variant="outline">Start one at your college</Button>
+          </div>
+        </div>
+
+        <NetworkMap class="lg:pt-4" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       7 — GROWTH
+       ============================================================ -->
+  <section class="band-paper band" aria-labelledby="growth-title">
+    <div class="shell">
+      <SectionHead
+        id="growth-title"
+        eyebrow="2024 to 2025"
+        title="Two years. Six-fold funding growth."
+        lead="Both figures below are published by RAVISH in its own annual reports. The direction is the story."
+      />
+
+      <div class="mt-12 overflow-x-auto" data-reveal="rise">
+        <table class="figure-table min-w-[46rem]">
+          <caption class="sr-only">
+            RAVISH growth from 2024 to 2025, from the IMPACT 2024 and IMPACT 2025 reports
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Metric</th>
+              <th scope="col">2024</th>
+              <th scope="col">2025</th>
+              <th scope="col" class="w-[34%]">Growth</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              growth.map((row, i) => (
+                <tr data-reveal="fade" style={`--reveal-delay:${i * 60}`}>
+                  <th scope="row" class="font-medium">{row.metric}</th>
+                  <td class="text-muted">{row.y2024}</td>
+                  <td class="font-semibold text-ash">{row.y2025}</td>
+                  <td>
+                    <span class="flex items-center gap-3">
+                      <span class="growth-bar w-full max-w-[11rem]">
+                        <span style={`width:${(row.multiple / maxMultiple) * 100}%`} />
+                      </span>
+                      <span class="shrink-0 font-display text-2xl font-semibold text-crimson">
+                        {row.multipleLabel}
+                      </span>
+                    </span>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <p class="mt-6 text-caption text-muted" data-reveal="fade">
+        Sources: RAVISH IMPACT 2024 (published 21 December 2024) and IMPACT 2025 (published
+        {' '}{source.published}).
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       8 — RECENT WORK
+       ============================================================ -->
+  <section class="band-paper-deep band" aria-labelledby="recent-title">
+    <div class="shell">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <SectionHead
+          id="recent-title"
+          eyebrow="Recent work"
+          title="What the camps actually look like"
+          class="flex-1"
+        />
+        <Button href="/what-we-do/medical-camps" variant="quiet" icon="arrowRight" class="shrink-0">
+          The full camp archive
+        </Button>
+      </div>
+
+      <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {
+          recentCamps.map((camp, i) => (
+            <CampCard
+              {...camp.data}
+              href={`/what-we-do/medical-camps/${camp.id}`}
+              index={i}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       9 — PARTNERS
+       ============================================================ -->
+  <section class="band-paper band" aria-labelledby="partners-title">
+    <div class="shell">
+      <SectionHead
+        id="partners-title"
+        eyebrow={`${partnerTotal}+ partnerships enacted`}
+        title="Who we work with"
+        lead="Camps need doctors, medicines, premises and someone the community already trusts. Almost none of that comes from us alone."
+      />
+
+      <!-- Label STEP gets the paragraph. An international MoU is a real marker. -->
+      <div class="card mt-12 grid gap-10 p-8 md:p-10 lg:grid-cols-[1.4fr_1fr]" data-reveal="rise-lg">
+        <div>
+          <div class="flex flex-wrap items-center gap-3">
+            <span class="tag">
+              <Icon name="globe" size={13} /> International
+            </span>
+            <span class="text-caption font-semibold tracking-[0.05em] text-muted uppercase">
+              {labelStep.country}
+            </span>
+          </div>
+          <h3 class="display-h2 mt-5 text-crimson">{labelStep.name}</h3>
+          <div class="mt-5 flex flex-col gap-4">
+            {labelStep.story.map((para) => <p class="measure text-small leading-relaxed text-ash">{para}</p>)}
+          </div>
+        </div>
+
+        <dl class="flex flex-col gap-5 self-start rounded-[12px] p-6" style="background:var(--color-paper)">
+          {
+            labelStep.facts.map((fact) => (
+              <div class="flex flex-col gap-1">
+                <dt class="eyebrow text-muted">{fact.label}</dt>
+                <dd class="text-small font-semibold text-crimson">{fact.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <div class="mt-10">
+        <Disclosure
+          peek="15rem"
+          moreLabel="See every partner"
+          lessLabel="Collapse partner list"
+          count={`${partnerGroups.reduce((n, g) => n + g.items.length, 0)} organisations`}
+          veil="paper"
+        >
+          <div class="grid gap-10 md:grid-cols-2">
+            {
+              partnerGroups.map((group, gi) => (
+                <div data-reveal="rise" style={`--reveal-delay:${gi * 70}`}>
+                  <h3 class="display-h3 text-crimson">{group.heading}</h3>
+                  <p class="mt-2 text-caption text-muted">{group.blurb}</p>
+                  <ul class="mt-5 flex flex-col gap-2.5">
+                    {group.items.map((item) => (
+                      <li class="flex items-baseline gap-2.5 text-small text-ash">
+                        <span class="bullet-dash" aria-hidden="true" />
+                        <span>
+                          {item.name}
+                          {item.note && <span class="text-muted"> — {item.note}</span>}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            }
+          </div>
+        </Disclosure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       10 — VOICES
+       ============================================================ -->
+  <section class="band-silk band relative" aria-labelledby="voices-title">
+    <span class="silk-weave" aria-hidden="true"></span>
+
+    <div class="shell relative">
+      <SectionHead
+        id="voices-title"
+        eyebrow="Voices"
+        title="We came to make a difference, they ended up changing us"
+        tone="cream"
+        lead="RAVISH writes about its own work reflectively rather than triumphantly. These are their words, from the archive."
+      />
+
+      <div class="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {
+          featuredVoices.map((voice, i) => (
+            <VoiceCard {...voice} tone="cream" index={i} />
+          ))
+        }
+      </div>
+
+      <div class="mt-12 flex flex-wrap items-center gap-4" data-reveal="rise">
+        <Button href="/stories" variant="on-silk" icon="arrowRight">Read the stories</Button>
+        <p class="text-small text-paper/92">
+          {stories.length} written up so far, out of hundreds in the archive.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       11 — IMPACT REPORTS
+       ============================================================ -->
+  <section class="band-paper band" aria-labelledby="reports-title">
+    <div class="shell">
+      <SectionHead
+        id="reports-title"
+        eyebrow="Read it yourself"
+        title="The annual impact reports"
+        lead="RAVISH publishes an annual log. Both are here in full — every slide, as designed."
+      />
+
+      <div class="mt-12 grid gap-6 md:grid-cols-2">
+        {
+          reports.map((report, i) => (
+            <a
+              href={`/impact#report-${report.year}`}
+              class="card group/card flex flex-col p-8"
+              data-reveal="rise"
+              style={`--reveal-delay:${i * 90}`}
+            >
+              <span class="card-edge" aria-hidden="true" />
+              <div class="flex items-start justify-between gap-4">
+                <span class="flex h-12 w-12 items-center justify-center rounded-full text-crimson" style="background:color-mix(in oklab, var(--color-crimson) 7%, transparent)">
+                  <Icon name="file" size={22} />
+                </span>
+                <span class="text-caption font-semibold tracking-[0.05em] text-muted uppercase">
+                  {report.slides} slides
+                </span>
+              </div>
+              <h3 class="display-h2 mt-5 text-crimson">{report.title}</h3>
+              <p class="mt-2 text-caption text-muted">Published {report.published}</p>
+              <p class="mt-4 flex-1 text-small leading-relaxed text-ash">{report.blurb}</p>
+              <span class="mt-6 inline-flex items-center gap-2 text-small font-semibold text-crimson">
+                Open the report
+                <Icon name="arrowRight" size={16} class="transition-transform duration-400 group-hover/card:translate-x-1" />
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       12 — GET INVOLVED (three doors)
+       ============================================================ -->
+  <section class="band-paper-deep band" aria-labelledby="involved-title">
+    <div class="shell">
+      <SectionHead
+        id="involved-title"
+        eyebrow="Get involved"
+        title="Three doors in"
+        align="center"
+        lead="You do not need to be a medical student to be useful here. Two of these three are open to anyone."
+      />
+
+      <div class="mt-14 grid gap-6 md:grid-cols-3 lg:gap-10">
+        {
+          [
+            {
+              icon: 'heart' as const,
+              title: 'Volunteer',
+              who: 'Open to everyone',
+              body: 'Registration, crowd management, pharmacy, logistics, photography, translation. Camps need many more hands than they need doctors.',
+              href: '/get-involved/volunteer',
+              cta: 'Sign up',
+            },
+            {
+              icon: 'users' as const,
+              title: 'Join a cabinet',
+              who: 'MBBS and BDS students',
+              body: 'Run RAVISH at your own college — camps, awareness drives, webinars, a full cabinet with seven departments. Terms run July to June.',
+              href: '/get-involved/cabinets',
+              cta: 'See the roles',
+            },
+            {
+              icon: 'building' as const,
+              title: 'Partner with us',
+              who: 'NGOs, hospitals, brands',
+              body: 'Doctors, medicines, premises, or a community you already have the trust of. Forty-five partnerships and counting.',
+              href: '/get-involved/partner',
+              cta: 'Start a conversation',
+            },
+          ].map((door, i) => (
+            <SkewCard
+              title={door.title}
+              eyebrow={door.who}
+              body={door.body}
+              href={door.href}
+              cta={door.cta}
+              icon={door.icon}
+              tone={(i % 4) as 0 | 1 | 2 | 3}
+              index={i}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       13 — DONATE BAND
+       ============================================================ -->
+  <DonateBand />
+</BaseLayout>

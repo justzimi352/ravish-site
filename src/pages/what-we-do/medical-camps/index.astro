@@ -1,0 +1,214 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import CampCard from '@/components/CampCard.astro';
+import Disclosure from '@/components/Disclosure.astro';
+import DonateBand from '@/components/DonateBand.astro';
+import Icon from '@/components/Icon.astro';
+
+const camps = (await getCollection('camps')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const kinds = [
+  { key: 'all', label: 'All camps' },
+  { key: 'general', label: 'General' },
+  { key: 'flood-relief', label: 'Flood relief' },
+  { key: 'label-step', label: 'Label STEP' },
+  { key: 'screening', label: 'Screening & drives' },
+];
+
+---
+
+<BaseLayout
+  title="Free Medical Camps"
+  description="RAVISH's flagship programme — 55+ free medical camps since March 2024, with consultations, free medicines, vitals screening and an on-site pharmacy. Browse the archive."
+>
+  <PageHero
+    eyebrow="55+ camps since March 2024"
+    title="Free Medical Camps"
+    lead="A hall, a school, or a courtyard; a table for registration, one for vitals, a few for consultations, and a pharmacy at the end. Between 150 and 500 people come through in a day, and none of them pay anything."
+  />
+
+  <section class="band-silk band-tight relative" aria-label="Camp figures">
+    <span class="silk-weave" aria-hidden="true"></span>
+    <div class="shell relative grid gap-8 sm:grid-cols-3">
+      <div data-reveal="rise">
+        <p class="numeral-gold">55+</p>
+        <p class="mt-2 text-small font-medium text-paper">camps organised</p>
+        <p class="mt-1 text-caption text-paper/92">since March 2024</p>
+      </div>
+      <div data-reveal="rise" style="--reveal-delay:80">
+        <p class="numeral-gold">15,000+</p>
+        <p class="mt-2 text-small font-medium text-paper">patients cared for</p>
+        <p class="mt-1 text-caption text-paper/92">free consultations and medicines</p>
+      </div>
+      <div data-reveal="rise" style="--reveal-delay:160">
+        <p class="numeral-gold">537</p>
+        <p class="mt-2 text-small font-medium text-paper">the largest single camp</p>
+        <p class="mt-1 text-caption text-paper/92">Kasur, 10 October 2024</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- what a camp involves -->
+  <section class="band-paper band" aria-labelledby="anatomy-title">
+    <div class="shell">
+      <SectionHead
+        id="anatomy-title"
+        eyebrow="Anatomy of a camp"
+        title="What happens between the gate and the pharmacy"
+      />
+
+      <ol class="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {
+          [
+            {
+              title: 'Registration',
+              body: 'Name, age, complaint. Student volunteers run this, and it is where the day’s crowd is either managed or lost.',
+            },
+            {
+              title: 'Vitals & screening',
+              body: 'Blood pressure, blood glucose, BMI — for every patient, not only the ones who mention a symptom. This is where undiagnosed disease surfaces.',
+            },
+            {
+              title: 'Consultation',
+              body: 'With a qualified doctor, always. Student volunteers assist, take histories and translate, and learn more in a day than in a week of lectures.',
+            },
+            {
+              title: 'Pharmacy & counselling',
+              body: 'Free medicines from an on-site pharmacy, and a counselling pamphlet in Urdu so the advice survives the walk home.',
+            },
+          ].map((step, i) => (
+            <li class="card flex flex-col p-7" data-reveal="rise" style={`--reveal-delay:${i * 85}`}>
+              <span class="card-edge" aria-hidden="true" />
+              <span
+                class="font-display text-[2.5rem] leading-none font-semibold"
+                style="font-variant-numeric:oldstyle-nums;background:var(--sunrise-ink);-webkit-background-clip:text;background-clip:text;color:transparent"
+                aria-hidden="true"
+              >
+                {i + 1}
+              </span>
+              <h3 class="display-h3 mt-4 text-crimson">{step.title}</h3>
+              <p class="mt-3 text-small leading-relaxed text-ash">{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div
+        class="card mt-10 flex items-start gap-4 p-7"
+        data-reveal="rise"
+      >
+        <span class="card-edge" aria-hidden="true"></span>
+        <Icon name="door" size={20} class="mt-0.5 shrink-0 text-crimson" />
+        <p class="text-small leading-relaxed text-ash">
+          <strong class="font-semibold">And then the referral.</strong> Since September 2025, patients
+          whose screening comes back high can be sent to the
+          <a href="/clinic" class="link-underline font-semibold">RAVISH Clinic</a> — free, weekly, and in
+          the same part of the city most of them live in. Before that, the referral was only a sentence.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- the archive -->
+  <section class="band-paper-deep band" aria-labelledby="archive-title">
+    <div class="shell">
+      <SectionHead
+        id="archive-title"
+        eyebrow="The archive"
+        title="Camp by camp"
+        lead="Written-up camps, most recent first. Cabinet officers add these as markdown files — see the note at the bottom of this page."
+      />
+
+      <!-- filter -->
+      <div class="mt-10 flex flex-wrap gap-2" role="group" aria-label="Filter camps by type">
+        {
+          kinds.map((kind, i) => (
+            <button
+              type="button"
+              class={`btn ${i === 0 ? 'btn-primary' : 'btn-quiet'} !min-h-10 !px-4 !py-2 !text-caption`}
+              data-filter={kind.key}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+            >
+              {kind.label}
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="mt-10">
+        <Disclosure
+          peek="46rem"
+          moreLabel="Show the whole archive"
+          lessLabel="Show fewer"
+          count={`${camps.length} camps written up`}
+          veil="paper-deep"
+        >
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3" data-camp-grid>
+            {
+              camps.map((camp, i) => (
+                <div data-camp-kind={camp.data.kind}>
+                  <CampCard {...camp.data} href={`/what-we-do/medical-camps/${camp.id}`} index={i} />
+                </div>
+              ))
+            }
+          </div>
+          <p class="mt-8 hidden text-body text-muted" data-camp-empty>
+            No camps of that type are written up yet.
+          </p>
+        </Disclosure>
+      </div>
+
+      <p class="mt-10 max-w-[64ch] text-small leading-relaxed text-muted" data-reveal="fade">
+        This archive is a fraction of the 55+ camps RAVISH has run — it holds the ones that have been
+        written up so far. If you ran a camp and want it here, add a markdown file to
+        <code class="rounded bg-paper px-1.5 py-0.5 text-caption">src/content/camps/</code> using the
+        template in that folder’s README. No code changes needed.
+      </p>
+    </div>
+  </section>
+
+  <DonateBand compact />
+</BaseLayout>
+
+<script>
+  // Filter the archive in place. Progressive: without JS every camp shows.
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const grid = document.querySelector<HTMLElement>('[data-camp-grid]');
+  const empty = document.querySelector<HTMLElement>('[data-camp-empty]');
+
+  if (buttons.length && grid) {
+    const items = [...grid.querySelectorAll<HTMLElement>('[data-camp-kind]')];
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.filter ?? 'all';
+
+        buttons.forEach((other) => {
+          const active = other === btn;
+          other.setAttribute('aria-pressed', String(active));
+          other.classList.toggle('btn-primary', active);
+          other.classList.toggle('btn-quiet', !active);
+        });
+
+        let shown = 0;
+        items.forEach((item) => {
+          const match = key === 'all' || item.dataset.campKind === key;
+          item.hidden = !match;
+          if (match) shown++;
+        });
+
+        if (empty) empty.hidden = shown > 0;
+
+        // the disclosure measured a taller grid — let it re-measure
+        const disclose = grid.closest<HTMLElement>('[data-disclose]');
+        if (disclose) {
+          const body = disclose.querySelector<HTMLElement>('.disclose-body');
+          if (body && disclose.dataset.open === 'true') body.style.maxHeight = 'none';
+        }
+      });
+    });
+  }
+</script>

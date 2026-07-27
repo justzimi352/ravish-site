@@ -1,0 +1,73 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  align?: 'start' | 'center';
+  tone?: 'ink' | 'cream';
+  /** h2 by default; pass h1 for page heads */
+  as?: 'h1' | 'h2';
+  class?: string;
+  id?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  lead,
+  align = 'start',
+  tone = 'ink',
+  as = 'h2',
+  class: className = '',
+  id,
+} = Astro.props;
+
+const Heading = as;
+const cream = tone === 'cream';
+---
+
+<header
+  class={`${align === 'center' ? 'text-center mx-auto' : ''} ${className}`}
+  style={align === 'center' ? 'max-width:46rem' : ''}
+>
+  {
+    eyebrow && (
+      <p
+        class={`eyebrow mb-4 ${cream ? 'text-gold-light' : 'text-crimson'}`}
+        data-reveal="rise"
+      >
+        {eyebrow}
+      </p>
+    )
+  }
+
+  <Heading
+    id={id}
+    class={`${as === 'h1' ? 'display-h1' : 'display-h2'} ${cream ? 'text-paper' : 'text-crimson'}`}
+    data-reveal="rise"
+    style="--reveal-delay:70"
+  >
+    {title}
+  </Heading>
+
+  <div
+    class="rule-sunrise mt-6"
+    style={`max-width:5.5rem;${align === 'center' ? 'margin-inline:auto;' : ''}--reveal-delay:140`}
+    data-reveal="line"
+    aria-hidden="true"
+  >
+  </div>
+
+  {
+    lead && (
+      <p
+        class={`lead mt-6 measure ${cream ? 'text-paper/92' : 'text-ash'} ${align === 'center' ? 'mx-auto' : ''}`}
+        data-reveal="rise"
+        style="--reveal-delay:190"
+      >
+        {lead}
+      </p>
+    )
+  }
+  <slot />
+</header>

@@ -1,0 +1,154 @@
+---
+import Icon from './Icon.astro';
+
+/**
+ * Progressive disclosure. Long sections show a peek, then a "See more" that
+ * expands them in place — so a visitor who wants the summary is never made to
+ * scroll past everything to reach the next section.
+ *
+ * Without JavaScript the content is fully visible and the button is hidden,
+ * so nothing is ever locked away behind a script.
+ */
+interface Props {
+  /** Collapsed height. Cut mid-row on purpose — the crop is the affordance. */
+  peek?: string;
+  moreLabel?: string;
+  lessLabel?: string;
+  /** Shown next to the label, e.g. "31 more" */
+  count?: string;
+  /** Match the fade to the band it sits on. */
+  veil?: 'paper' | 'paper-deep' | 'paper-lift' | 'silk';
+  align?: 'center' | 'start';
+  class?: string;
+}
+
+const {
+  peek = '26rem',
+  moreLabel = 'See more',
+  lessLabel = 'See less',
+  count,
+  veil = 'paper',
+  align = 'center',
+  class: className = '',
+} = Astro.props;
+
+const veilColor = {
+  paper: 'var(--color-paper)',
+  'paper-deep': 'var(--color-paper-deep)',
+  'paper-lift': 'var(--color-paper-lift)',
+  silk: '#96080b',
+}[veil];
+
+const id = `disclose-${Math.random().toString(36).slice(2, 9)}`;
+const onSilk = veil === 'silk';
+---
+
+<div class={`disclose ${className}`} data-disclose data-open="false" style={`--disclose-peek:${peek}`}>
+  <div class="disclose-window">
+    <div class="disclose-body" id={id}>
+      <slot />
+    </div>
+    <div class="disclose-veil" style={`--veil-to:${veilColor}`} aria-hidden="true"></div>
+  </div>
+
+  <div class={`mt-7 flex ${align === 'center' ? 'justify-center' : 'justify-start'}`} data-disclose-controls hidden>
+    <button
+      type="button"
+      class={`btn disclose-toggle ${onSilk ? 'btn-on-silk' : 'btn-quiet'}`}
+      aria-expanded="false"
+      aria-controls={id}
+    >
+      <span data-more>{moreLabel}</span>
+      <span data-less hidden>{lessLabel}</span>
+      {count && <span class={`disclose-count ${onSilk ? 'opacity-80' : ''}`} data-count>· {count}</span>}
+      <Icon name="chevronDown" size={16} class="chev" />
+    </button>
+  </div>
+</div>
+
+<script>
+  // One handler for every disclosure on the page.
+  const setup = (root: HTMLElement) => {
+    const body = root.querySelector<HTMLElement>('.disclose-body');
+    const controls = root.querySelector<HTMLElement>('[data-disclose-controls]');
+    const btn = controls?.querySelector<HTMLButtonElement>('button');
+    if (!body || !controls || !btn) return;
+
+    const peek = body.getBoundingClientRect().height;
+    const full = body.scrollHeight;
+
+    // Nothing is actually hidden — don't offer a button that does nothing.
+    if (full - peek < 24) {
+      root.dataset.open = 'true';
+      body.style.maxHeight = 'none';
+      root.querySelector('.disclose-veil')?.remove();
+      return;
+    }
+
+    controls.hidden = false;
+
+    const more = btn.querySelector<HTMLElement>('[data-more]');
+    const less = btn.querySelector<HTMLElement>('[data-less]');
+    const count = btn.querySelector<HTMLElement>('[data-count]');
+
+    btn.addEventListener('click', () => {
+      const open = root.dataset.open === 'true';
+
+      if (open) {
+        // collapse: pin the current height, reflow, then release to the peek
+        body.style.maxHeight = `${body.scrollHeight}px`;
+        void body.offsetHeight;
+        root.dataset.open = 'false';
+        body.style.maxHeight = '';
+        btn.setAttribute('aria-expanded', 'false');
+        if (more) more.hidden = false;
+        if (less) less.hidden = true;
+        if (count) count.hidden = false;
+
+        // keep the toggle in view rather than dumping the reader up the page
+        const top = root.getBoundingClientRect().top;
+        if (top < 0) root.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      } else {
+        root.dataset.open = 'true';
+        body.style.maxHeight = `${body.scrollHeight}px`;
+        btn.setAttribute('aria-expanded', 'true');
+        if (more) more.hidden = true;
+        if (less) less.hidden = false;
+        if (count) count.hidden = true;
+
+        // once open, stop constraining it so nested content can grow
+        body.addEventListener(
+          'transitionend',
+          (e) => {
+            if (e.propertyName === 'max-height' && root.dataset.open === 'true') {
+              body.style.maxHeight = 'none';
+            }
+          },
+          { once: true }
+        );
+      }
+    });
+  };
+
+  const init = () => document.querySelectorAll<HTMLElement>('[data-disclose]').forEach(setup);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+  // fonts land late and change the measurement
+  document.fonts?.ready.then(() => {
+    document.querySelectorAll<HTMLElement>('[data-disclose][data-open="false"]').forEach((root) => {
+      const body = root.querySelector<HTMLElement>('.disclose-body');
+      const controls = root.querySelector<HTMLElement>('[data-disclose-controls]');
+      if (!body || !controls) return;
+      if (body.scrollHeight - body.getBoundingClientRect().height < 24) {
+        root.dataset.open = 'true';
+        body.style.maxHeight = 'none';
+        controls.hidden = true;
+        root.querySelector('.disclose-veil')?.remove();
+      }
+    });
+  });
+</script>

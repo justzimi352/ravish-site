@@ -1,0 +1,177 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import Disclosure from '@/components/Disclosure.astro';
+import DonateBand from '@/components/DonateBand.astro';
+import Icon from '@/components/Icon.astro';
+import Button from '@/components/Button.astro';
+import { awarenessTopics } from '@/data/programmes';
+---
+
+<BaseLayout
+  title="Awareness & Screening"
+  description="Hepatitis B and C screening with VFAHT Pakistan, breast and cervical cancer, dengue, thalassemia, diabetes, hypertension and more — RAVISH's awareness and screening programme."
+>
+  <PageHero
+    eyebrow="Screening & public education"
+    title="Finding what nobody has looked for yet"
+    lead="Screening is the cheapest useful thing a medical camp does, and the least visible. Nobody arrives grateful for a blood pressure reading. It is still the reading that changes the most outcomes."
+  />
+
+  <!-- hepatitis, the flagship -->
+  <section class="band-paper band" aria-labelledby="hepatitis-title">
+    <div class="shell">
+      <div class="grid gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+        <div>
+          <SectionHead
+            id="hepatitis-title"
+            eyebrow="The largest programme"
+            title="Hepatitis B and C"
+          />
+
+          <div class="mt-9 flex flex-col gap-5">
+            <p class="measure text-body text-ash">
+              Hepatitis screening with <strong class="font-semibold">VFAHT Pakistan</strong> is the most
+              frequently repeated campaign in the RAVISH archive, and VFAHT is the second most frequent
+              partner overall. The first joint screening ran on 31 October 2024. It has run many times
+              since, in several cities.
+            </p>
+            <p class="measure text-body text-ash">
+              The reason is scale. Pakistan carries close to a fifth of the global hepatitis C burden.
+              Around ten million people are diagnosed with hepatitis C worldwide each year, and another
+              five million with hepatitis B. Both can sit for a decade behind symptoms mild enough to
+              dismiss — occasional abdominal pain, a loss of appetite — and then present as cirrhosis or
+              hepatocellular carcinoma.
+            </p>
+            <blockquote class="border-l-2 border-crimson/25 pl-6">
+              <p class="measure text-body text-ash italic">
+                “She had been diagnosed with hepatitis C almost ten years earlier, but she never realised
+                how destructive the disease could become. She had occasional abdominal pain and a loss of
+                appetite, symptoms that many of us would easily dismiss.”
+              </p>
+              <footer class="mt-3 text-caption text-muted">
+                RAVISH FMC, World Hepatitis Day, July 2026
+              </footer>
+            </blockquote>
+            <p class="measure text-body text-ash">
+              A screening camp cannot cure any of that. What it can do is find it early enough that
+              treatment is still cheap and still works, and tell a family that the vaccine for hepatitis
+              B exists and is free at the government facility down the road.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-5">
+          <div class="card p-7" data-reveal="rise">
+            <span class="card-edge" aria-hidden="true"></span>
+            <p class="eyebrow text-crimson">Screened at every camp</p>
+            <ul class="mt-5 flex flex-col gap-3.5">
+              {
+                ['Blood pressure', 'Blood glucose', 'BMI'].map((item) => (
+                  <li class="flex items-center gap-3 text-body text-ash">
+                    <Icon name="check" size={18} class="shrink-0 text-ember" />
+                    {item}
+                  </li>
+                ))
+              }
+            </ul>
+            <p class="mt-5 text-small leading-relaxed text-muted">
+              Not only for patients who mention a symptom. For everyone who comes through registration —
+              which is the whole point, because the people who need it most are the ones who did not come
+              in about it.
+            </p>
+          </div>
+
+          <div class="card p-7" data-reveal="rise" style="--reveal-delay:90">
+            <span class="card-edge" aria-hidden="true"></span>
+            <p class="eyebrow text-crimson">And then?</p>
+            <p class="mt-4 text-small leading-relaxed text-ash">
+              A high reading is only useful if something follows it. Since September 2025 that something
+              is the RAVISH Clinic — free, weekly, and in the neighbourhood.
+            </p>
+            <Button href="/clinic" variant="quiet" icon="arrowRight" class="mt-5">The clinic</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- all topics -->
+  <section class="band-paper-deep band" aria-labelledby="topics-title">
+    <div class="shell">
+      <SectionHead
+        id="topics-title"
+        eyebrow={`${awarenessTopics.length} campaign topics`}
+        title="Everything the awareness programme covers"
+        lead="Some are year-round. Some are seasonal — dengue with the monsoon, smog in the Lahore winter, heatstroke in June. Some follow the international health calendar, like Pink October."
+      />
+
+      <div class="mt-12">
+        <Disclosure
+          peek="24rem"
+          moreLabel="Show every topic"
+          lessLabel="Show fewer"
+          count={`${awarenessTopics.length} topics`}
+          veil="paper-deep"
+        >
+          <ul class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {
+              awarenessTopics.map((topic, i) => (
+                <li
+                  class="card flex flex-col p-6"
+                  data-reveal="rise"
+                  style={`--reveal-delay:${Math.min(i, 8) * 45}`}
+                >
+                  <span class="card-edge" aria-hidden="true" />
+                  <div class="flex items-start justify-between gap-3">
+                    <h3 class="text-body font-semibold text-ash">{topic.name}</h3>
+                    {topic.scale === 'largest' && <span class="tag shrink-0">Largest</span>}
+                  </div>
+                  <p class="mt-2 text-small leading-relaxed text-muted">{topic.note}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </Disclosure>
+      </div>
+    </div>
+  </section>
+
+  <!-- how a campaign runs -->
+  <section class="band-paper band" aria-labelledby="how-campaign-title">
+    <div class="shell-narrow">
+      <SectionHead
+        id="how-campaign-title"
+        eyebrow="How a campaign runs"
+        title="Talks, pamphlets, and a table in the right place"
+      />
+
+      <div class="mt-10 flex flex-col gap-6">
+        <p class="text-body leading-relaxed text-ash">
+          RAVISH promotes preventive healthcare through awareness campaigns on dengue, TB, hepatitis,
+          cancers, menstrual hygiene, obesity and monsoon-related risks. Activities include talks,
+          pamphlets, and community engagement in hospitals, colleges and public spaces.
+        </p>
+        <p class="text-caption text-muted">RAVISH, IMPACT 2025</p>
+        <p class="text-body leading-relaxed text-ash">
+          The pamphlets are in Urdu. That sounds like a small detail and it is the difference between
+          advice a patient hears once and advice a patient can show to the person who actually cooks the
+          food or buys the cigarettes.
+        </p>
+        <p class="text-body leading-relaxed text-ash">
+          Campaigns run alongside online sessions too — a World Hepatitis Day seminar, a menstrual health
+          talk in a girls’ school — because the audience that needs the information is not always the
+          audience that comes to a camp.
+        </p>
+      </div>
+
+      <div class="mt-10 flex flex-wrap gap-3">
+        <Button href="/get-involved/volunteer" icon="arrowRight">Help run a campaign</Button>
+        <Button href="/what-we-do/education" variant="outline">Education & webinars</Button>
+      </div>
+    </div>
+  </section>
+
+  <DonateBand compact />
+</BaseLayout>

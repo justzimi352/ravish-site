@@ -1,0 +1,257 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import NetworkMap from '@/components/NetworkMap.astro';
+import Disclosure from '@/components/Disclosure.astro';
+import Button from '@/components/Button.astro';
+import Icon from '@/components/Icon.astro';
+import DonateBand from '@/components/DonateBand.astro';
+import { chapters, chaptersByCity, cabinetCities, linkedChapters } from '@/data/chapters';
+import { governance } from '@/data/timeline';
+
+const byCity = chaptersByCity();
+const active = chapters.filter((c) => !c.dormant);
+const slug = (city: string) => `city-${city.toLowerCase().replace(/\s+/g, '-')}`;
+
+// A dozen cabinets have no public handle yet — worth being straight about it
+// rather than linking somewhere that 404s.
+const withoutHandle = chapters.filter((c) => !c.instagram).length;
+const archiveSlides = Array.from({ length: 18 }, (_, i) => `/archive/cabinets/cabinet-${String(i + 1).padStart(2, '0')}.webp`);
+---
+
+<BaseLayout
+  title="Chapters & local cabinets"
+  description={`All ${active.length} RAVISH local cabinets, one per medical college, across ${cabinetCities.length} cities — with presidents for the 2025–26 term and links to each chapter's Instagram.`}
+>
+  <PageHero
+    eyebrow={`${active.length} local cabinets · ${cabinetCities.length} cities`}
+    title="One cabinet per college"
+    lead="A local cabinet is a medical college running RAVISH itself — its own camps, its own awareness drives, its own webinars, under one name and one standard. It is the reason RAVISH can be in Gilgit and Karachi in the same week."
+  />
+
+  <!-- the map -->
+  <section class="band-paper-deep band" aria-labelledby="map-title">
+    <div class="shell">
+      <div class="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+        <div>
+          <SectionHead
+            id="map-title"
+            eyebrow="Where we are"
+            title="The network, plotted"
+            lead="Cabinet cities are filled and sized by how many chapters sit there. Outlined dots are places camps have run without a chapter being founded yet."
+          />
+
+          <div class="mt-10 flex flex-col gap-5">
+            {
+              byCity.slice(0, 6).map(([city, , active], i) => (
+                <a
+                  href={`#${slug(city)}`}
+                  class="group/city flex items-baseline justify-between gap-4 border-b border-line pb-3 transition-colors duration-200 hover:border-crimson/40"
+                  data-reveal="rise"
+                  style={`--reveal-delay:${i * 55}`}
+                >
+                  <span class="text-body font-medium text-ash transition-colors duration-200 group-hover/city:text-crimson">
+                    {city}
+                  </span>
+                  <span class="flex items-center gap-3">
+                    <span class="text-caption text-muted">
+                      {active} {active === 1 ? 'cabinet' : 'cabinets'}
+                    </span>
+                    <Icon
+                      name="arrowRight"
+                      size={15}
+                      class="text-crimson opacity-0 transition-all duration-300 group-hover/city:translate-x-0.5 group-hover/city:opacity-100"
+                    />
+                  </span>
+                </a>
+              ))
+            }
+            <p class="text-caption text-muted">
+              …and one each in {byCity.filter(([, , a]) => a === 1).map(([c]) => c).join(', ')}.
+            </p>
+          </div>
+        </div>
+
+        <NetworkMap linkBase="" class="lg:pt-2" />
+      </div>
+    </div>
+  </section>
+
+  <!-- the full directory -->
+  <section class="band-paper band" aria-labelledby="directory-title">
+    <div class="shell">
+      <SectionHead
+        id="directory-title"
+        eyebrow="The directory"
+        title="Every cabinet, and who leads it"
+        lead="Presidents listed are for the 2025–26 term. Some colleges list two, either co-presidents or a mid-term change. Every Instagram handle here is one RAVISH has published — none are guessed from a pattern."
+      />
+
+      <div class="mt-12">
+        <Disclosure
+          peek="42rem"
+          moreLabel="Show every city"
+          lessLabel="Collapse the directory"
+          count={`${byCity.length} cities, ${chapters.length} entries`}
+          veil="paper"
+        >
+          <div class="flex flex-col gap-14">
+            {
+              byCity.map(([city, list, active]) => (
+                <div id={slug(city)} style="scroll-margin-top:7rem">
+                  <div class="flex flex-wrap items-baseline justify-between gap-3 border-b-2 border-crimson/20 pb-3">
+                    <h3 class="display-h3 text-crimson">{city}</h3>
+                    <p class="text-caption font-semibold tracking-[0.06em] text-muted uppercase">
+                      {active} {active === 1 ? 'cabinet' : 'cabinets'}
+                    </p>
+                  </div>
+
+                  <ul class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    {
+                      list.map((chapter, i) => (
+                        <li
+                          class="card group/card flex flex-col p-5"
+                          data-reveal="rise"
+                          style={`--reveal-delay:${Math.min(i, 6) * 45}`}
+                        >
+                          <span class="card-edge" aria-hidden="true" />
+                          <div class="flex items-start justify-between gap-3">
+                            <p class="text-caption font-semibold tracking-[0.07em] text-crimson uppercase">
+                              {chapter.short}
+                            </p>
+                            {chapter.founding && <span class="tag shrink-0">Founding chapter</span>}
+                            {chapter.dormant && (
+                              <span class="text-caption text-muted">No 2025–26 president listed</span>
+                            )}
+                          </div>
+
+                          <h4 class="mt-2 text-body leading-snug font-semibold text-ash">
+                            {chapter.institution}
+                          </h4>
+
+                          {chapter.presidents.length > 0 && (
+                            <dl class="mt-4 border-t border-line pt-4">
+                              <dt class="eyebrow text-muted">
+                                {chapter.presidents.length > 1 ? 'Presidents' : 'President'} 2025–26
+                              </dt>
+                              {chapter.presidents.map((p) => (
+                                <dd class="mt-1.5 text-small text-ash">
+                                  {p.name}
+                                  <span class="text-muted">
+                                    {' '}— {p.year === 'Graduate' ? 'graduate' : `year ${p.year}`}
+                                  </span>
+                                </dd>
+                              ))}
+                            </dl>
+                          )}
+
+                          <div class="mt-auto pt-5">
+                            {chapter.instagram ? (
+                              <a
+                                href={`https://instagram.com/${chapter.instagram}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="inline-flex items-center gap-2 text-small font-semibold text-crimson link-underline"
+                              >
+                                <Icon name="instagram" size={15} />
+                                @{chapter.instagram}
+                              </a>
+                            ) : (
+                              <span class="text-caption text-muted">No public handle yet</span>
+                            )}
+                          </div>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
+              ))
+            }
+          </div>
+        </Disclosure>
+      </div>
+
+      <p class="mt-10 max-w-[64ch] text-small leading-relaxed text-muted" data-reveal="fade">
+        {linkedChapters.length} of {chapters.length} cabinets have a published Instagram account;
+        {' '}{withoutHandle} do not have one yet. If you run a cabinet and your handle is missing or
+        wrong here, write to
+        <a href="mailto:ravishngo@gmail.com" class="link-underline font-semibold">ravishngo@gmail.com</a>
+        and it will be corrected.
+      </p>
+    </div>
+  </section>
+
+  <!-- how a cabinet works -->
+  <section class="band-paper-deep band" aria-labelledby="how-title">
+    <div class="shell">
+      <div class="grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
+        <div>
+          <SectionHead
+            id="how-title"
+            eyebrow="How a cabinet works"
+            title="Seven departments, one term"
+            lead={governance.term}
+          />
+
+          <div class="mt-10 flex flex-col gap-8">
+            <div>
+              <h3 class="eyebrow text-crimson">Office bearers</h3>
+              <p class="mt-3 text-body text-ash">{governance.local[0]}</p>
+            </div>
+            <div>
+              <h3 class="eyebrow text-crimson">Departments</h3>
+              <p class="mt-3 text-body text-ash">{governance.local[1]}</p>
+            </div>
+            <div>
+              <h3 class="eyebrow text-crimson">Who can join</h3>
+              <p class="mt-3 text-body text-ash">{governance.eligibility}</p>
+            </div>
+            <div>
+              <h3 class="eyebrow text-crimson">New for 2026–27</h3>
+              <p class="mt-3 text-body text-ash">{governance.regional}</p>
+            </div>
+          </div>
+
+          <div class="mt-10 flex flex-wrap gap-3">
+            <Button href="/get-involved/cabinets" icon="arrowRight">Start a cabinet</Button>
+            <Button href="/about#governance" variant="outline">How RAVISH is run</Button>
+          </div>
+        </div>
+
+        <!-- from the archive -->
+        <div>
+          <h3 class="display-h3 text-crimson" data-reveal="rise">From the cabinet archive</h3>
+          <p class="mt-3 max-w-[46ch] text-small leading-relaxed text-muted" data-reveal="rise">
+            Every cabinet publishes a “Meet the Team” carousel at the start of its term and a signing-off
+            post at the end. These are the 2025–26 reveals.
+          </p>
+
+          <div class="mt-8">
+            <Disclosure peek="21rem" moreLabel="See all reveals" lessLabel="Show fewer" count={`${archiveSlides.length} slides`} veil="paper-deep">
+              <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {
+                  archiveSlides.map((src, i) => (
+                    <li class="img-frame group/card card overflow-hidden rounded-[12px] p-0" data-reveal="scale" style={`--reveal-delay:${Math.min(i, 8) * 45}`}>
+                      <img
+                        src={src}
+                        alt={`RAVISH local cabinet reveal, slide ${i + 1}`}
+                        width="1080"
+                        height="1920"
+                        loading="lazy"
+                        decoding="async"
+                        class="aspect-[9/16] w-full object-cover"
+                      />
+                    </li>
+                  ))
+                }
+              </ul>
+            </Disclosure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <DonateBand compact />
+</BaseLayout>

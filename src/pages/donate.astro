@@ -1,0 +1,293 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import Button from '@/components/Button.astro';
+import Icon from '@/components/Icon.astro';
+import { site, donation } from '@/data/site';
+import { headline } from '@/data/stats';
+
+const accountRows = [
+  { label: 'Account name', value: donation.accountName, copy: donation.accountName },
+  { label: 'Account number', value: donation.accountNumber, copy: donation.accountNumber, mono: true },
+  { label: 'IBAN', value: donation.iban, copy: donation.iban, mono: true },
+  { label: 'Bank', value: donation.bank },
+];
+
+const goesTo = [
+  {
+    icon: 'stethoscope' as const,
+    title: 'The medical camps',
+    body: 'Medicines, consumables, screening strips, transport for teams and equipment, and the on-site pharmacy. A camp of 250 patients is the standard unit of cost here.',
+  },
+  {
+    icon: 'door' as const,
+    title: 'The RAVISH Clinic',
+    body: 'The weekly free clinic near Androon Lahore — its medicines, diagnostics and running costs. This is the recurring commitment, not a one-off.',
+  },
+  {
+    icon: 'waves' as const,
+    title: 'Relief work',
+    body: 'Mobile medical care, rations, hygiene kits and clothing when there is a flood. In 2025 that was more than twenty camps across Punjab and KPK.',
+  },
+  {
+    icon: 'basket' as const,
+    title: 'Welfare drives',
+    body: 'Ramadan ration bags and iftar meals, orphanage and old-age home visits, winter clothing, clean water.',
+  },
+];
+---
+
+<BaseLayout
+  title="Donate"
+  description="Support free medical camps, the RAVISH Clinic and nationwide relief work. Bank details, what your contribution funds, and a plain statement of RAVISH's legal status."
+>
+  <PageHero
+    eyebrow="Support the work"
+    title="Donate today. Help us heal tomorrow."
+    lead="Millions in Pakistan still lack access to quality healthcare. Your support helps RAVISH deliver free services to communities nationwide."
+  >
+    <div class="mt-hero flex flex-wrap gap-3" data-reveal="rise" style="--reveal-delay:280">
+      <Button href="#account" icon="arrowRight">Bank details</Button>
+      <Button href="#status" variant="outline">Read our status first</Button>
+    </div>
+  </PageHero>
+
+  <!-- what it has funded so far -->
+  <section class="band-silk band-tight relative" aria-labelledby="funded-title">
+    <span class="silk-weave" aria-hidden="true"></span>
+    <div class="shell relative">
+      <h2 id="funded-title" class="eyebrow text-gold-light" data-reveal="rise">What has been funded so far</h2>
+      <div class="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          headline.map((stat, i) => (
+            <div data-reveal="rise" style={`--reveal-delay:${i * 80}`}>
+              <p class="numeral-gold">
+                {stat.value.toLocaleString('en-US')}
+                {stat.suffix}
+              </p>
+              <p class="mt-2 text-small font-medium text-paper">{stat.label}</p>
+            </div>
+          ))
+        }
+      </div>
+      <p class="mt-9 text-small text-paper/92" data-reveal="fade">
+        On PKR 3 million raised in total, across 2024 and 2025 combined. Source: RAVISH IMPACT 2025.
+      </p>
+    </div>
+  </section>
+
+  <!-- financial transparency, directly above the account block -->
+  <section class="band-paper band" aria-labelledby="transparency-title">
+    <div class="shell">
+      <div class="grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
+        <div>
+          <SectionHead id="transparency-title" eyebrow="Financial governance" title="How the money is tracked" />
+
+          <blockquote class="mt-9 border-l-2 border-crimson/25 pl-6" data-reveal="rise">
+            <p class="measure text-body leading-relaxed text-ash">
+              RAVISH maintains strict financial governance across all initiatives. Funds are tracked on an
+              <strong class="font-semibold"> activity-wise basis</strong>, ensuring clear allocation and
+              utilisation for each campaign. A strong emphasis is placed on
+              <strong class="font-semibold"> donor accountability</strong>, with transparent reporting
+              mechanisms that reinforce trust and credibility.
+            </p>
+            <footer class="mt-4 text-caption text-muted">RAVISH, IMPACT 2025</footer>
+          </blockquote>
+
+          <p class="measure mt-8 text-body text-ash" data-reveal="rise">
+            In practice that means every camp, drive and relief deployment carries its own line. If you
+            want to know what your contribution paid for, write to
+            <a href={`mailto:${site.email}`} class="link-underline font-semibold">{site.email}</a>
+            and ask. You will get an answer.
+          </p>
+
+          <!-- account block -->
+          <div id="account" class="card mt-12 p-8" style="scroll-margin-top:6.5rem" data-reveal="rise-lg">
+            <span class="card-edge" aria-hidden="true"></span>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <h3 class="display-h3 text-crimson">The national account</h3>
+              <span class="tag">
+                <Icon name="banknote" size={13} /> {donation.bankShort}
+              </span>
+            </div>
+
+            <dl class="mt-7 flex flex-col divide-y divide-line border-y border-line">
+              {
+                accountRows.map((row) => (
+                  <div class="grid items-center gap-2 py-4 sm:grid-cols-[9.5rem_1fr_auto]">
+                    <dt class="eyebrow text-muted">{row.label}</dt>
+                    <dd
+                      class={`text-body text-ash ${row.mono ? 'font-medium' : ''}`}
+                      style={row.mono ? 'font-variant-numeric:tabular-nums;letter-spacing:.02em' : ''}
+                    >
+                      {row.value}
+                    </dd>
+                    {row.copy && (
+                      <button
+                        type="button"
+                        class="btn btn-quiet !min-h-9 justify-self-start !px-3 !py-1.5 !text-caption sm:justify-self-end"
+                        data-copy={row.copy}
+                        aria-label={`Copy ${row.label}`}
+                      >
+                        <Icon name="copy" size={14} />
+                        <span data-copy-state>Copy</span>
+                      </button>
+                    )}
+                  </div>
+                ))
+              }
+            </dl>
+
+            <p class="mt-6 text-small leading-relaxed text-muted">
+              For confirmation or a question about a transfer, contact
+              <a href={`tel:${site.phoneHref}`} class="link-underline font-semibold">{site.phone}</a>
+              or
+              <a href={`mailto:${site.email}`} class="link-underline font-semibold">{site.email}</a>.
+            </p>
+
+            <div
+              class="mt-6 flex items-start gap-3 rounded-[11px] p-4"
+              style="background:color-mix(in oklab, var(--color-crimson) 6%, transparent)"
+            >
+              <Icon name="shield" size={18} class="mt-0.5 shrink-0 text-crimson" />
+              <p class="text-small leading-relaxed text-ash">
+                This is the only account RAVISH publishes on this website. Individual chapters sometimes
+                post personal mobile-wallet numbers for a specific, time-boxed campaign on Instagram. If
+                you are asked for money by anyone claiming to represent RAVISH and the details are not
+                the ones above, check with us first.
+              </p>
+            </div>
+          </div>
+
+          <!-- Ramadan tiers -->
+          <div class="mt-10" data-reveal="rise">
+            <h3 class="display-h3 text-crimson">Ramadan Relief, if you prefer something concrete</h3>
+            <ul class="mt-6 grid gap-4 sm:grid-cols-2">
+              {
+                donation.ramadan.map((tier) => (
+                  <li class="card flex flex-col p-6">
+                    <span class="card-edge" aria-hidden="true" />
+                    <p class="font-display text-[2rem] leading-none font-semibold text-crimson">{tier.amount}</p>
+                    <p class="mt-3 text-body font-semibold text-ash">{tier.label}</p>
+                    <p class="mt-1.5 text-small text-muted">{tier.note}</p>
+                  </li>
+                ))
+              }
+            </ul>
+            <p class="mt-4 text-caption text-muted">2026 rates. Note the reference when you transfer.</p>
+          </div>
+        </div>
+
+        <!-- what it funds -->
+        <div>
+          <h2 class="display-h2 text-crimson" data-reveal="rise">Where it goes</h2>
+          <div class="rule-sunrise mt-6" style="max-width:5rem" data-reveal="line" aria-hidden="true"></div>
+
+          <ul class="mt-9 flex flex-col gap-4">
+            {
+              goesTo.map((item, i) => (
+                <li class="card flex gap-5 p-6" data-reveal="rise" style={`--reveal-delay:${i * 80}`}>
+                  <span class="card-edge" aria-hidden="true" />
+                  <span
+                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-crimson"
+                    style="background:color-mix(in oklab, var(--color-crimson) 7%, transparent)"
+                  >
+                    <Icon name={item.icon} size={20} />
+                  </span>
+                  <div>
+                    <h3 class="text-body font-semibold text-ash">{item.title}</h3>
+                    <p class="mt-1.5 text-small leading-relaxed text-muted">{item.body}</p>
+                  </div>
+                </li>
+              ))
+            }
+          </ul>
+
+          <div class="card mt-8 p-7" data-reveal="rise">
+            <p class="eyebrow text-crimson">Rather give something other than money?</p>
+            <p class="mt-4 text-small leading-relaxed text-ash">
+              Medicines, consumables and diagnostic supplies go further than cash for the clinic. So does
+              a doctor’s Saturday. If you are a pharmacy, distributor, lab or hospital, in-kind support is
+              often the most useful thing you can offer.
+            </p>
+            <div class="mt-6 flex flex-wrap gap-3">
+              <Button href="/get-involved/partner" variant="quiet" icon="arrowRight">Partner with us</Button>
+              <Button href="/get-involved/volunteer" variant="quiet">Volunteer</Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       STATUS DISCLOSURE — visible body text, small but not greyed out.
+       Honest disclosure only works if people can actually read it.
+       ================================================================ -->
+  <section class="band-paper-deep band" id="status" style="scroll-margin-top:6rem" aria-labelledby="status-title">
+    <div class="shell-narrow">
+      <SectionHead
+        id="status-title"
+        eyebrow="Please read this before you give"
+        title="About RAVISH’s status"
+      />
+
+      <div class="mt-10 flex flex-col gap-6" data-reveal="rise">
+        <p class="text-body leading-relaxed text-ash">
+          RAVISH is a <strong class="font-semibold">student-led organisation</strong>. It is
+          <strong class="font-semibold"> not</strong> a registered NGO and
+          <strong class="font-semibold"> not</strong> a Section 42 not-for-profit company. It was formed
+          by medical students for the purpose of spreading health awareness and helping the less
+          fortunate.
+        </p>
+
+        <p class="text-body leading-relaxed text-ash">
+          Donations are received into the account listed above, which is held in the name of a member of
+          the RAVISH National Cabinet, and are used solely to fund the medical camps, the RAVISH Clinic,
+          relief work and welfare drives described on this site. Funds are tracked on an activity-wise
+          basis.
+        </p>
+
+        <p class="text-body leading-relaxed text-ash">
+          Because RAVISH is not a registered charity,
+          <strong class="font-semibold"> we cannot issue tax-exempt receipts</strong>. If you would like
+          to know how your contribution was used, write to
+          <a href={`mailto:${site.email}`} class="link-underline font-semibold">{site.email}</a>
+          and we will tell you.
+        </p>
+
+        <hr class="my-2 border-line" />
+
+        <p class="text-small leading-relaxed text-muted">
+          The name “RAVISH NGO” is the one the organisation is publicly known by, including on its own
+          social accounts. It is used on this website for that reason and should not be read as a claim
+          of registered charitable status. If registered status is a requirement for your giving — as it
+          is for many corporate and institutional donors — then RAVISH does not currently meet it, and we
+          would rather you knew that now than later.
+        </p>
+      </div>
+
+      <div class="mt-10 flex flex-wrap gap-3" data-reveal="rise">
+        <Button href="#account" icon="arrowRight">Back to the bank details</Button>
+        <Button href="/contact" variant="outline">Ask us something first</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- closing -->
+  <section class="band-silk band-tight relative" aria-labelledby="closing-title">
+    <span class="silk-weave" aria-hidden="true"></span>
+    <div class="shell-narrow relative text-center">
+      <h2 id="closing-title" class="display-h2 text-paper" data-reveal="rise">
+        RAVISH aims to expand clinic networks, scale occupational health programs, strengthen disaster
+        response, and empower the next generation of youth leaders.
+      </h2>
+      <p class="mt-7 text-body text-paper/92" data-reveal="rise" style="--reveal-delay:90">
+        Guided by ethics, transparency, and collaboration, RAVISH remains committed to building a
+        healthier and more just Pakistan.
+      </p>
+      <p class="mt-4 text-caption text-paper/92" data-reveal="fade">RAVISH, IMPACT 2025</p>
+    </div>
+  </section>
+</BaseLayout>

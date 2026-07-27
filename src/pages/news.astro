@@ -1,0 +1,94 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import Disclosure from '@/components/Disclosure.astro';
+import DonateBand from '@/components/DonateBand.astro';
+import Icon from '@/components/Icon.astro';
+import Button from '@/components/Button.astro';
+import { site } from '@/data/site';
+
+const news = (await getCollection('news')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const kindLabel: Record<string, string> = {
+  camp: 'Camp',
+  partnership: 'Partnership',
+  appointment: 'Appointment',
+  milestone: 'Milestone',
+  campaign: 'Campaign',
+};
+---
+
+<BaseLayout
+  title="News"
+  description="Camp recaps, memoranda of understanding, appointments and milestones from RAVISH."
+>
+  <PageHero
+    eyebrow="Announcements & milestones"
+    title="News"
+    lead="Partnerships signed, appointments made, and the moments that changed what RAVISH is able to do. Day-to-day camp activity lives on Instagram; this is the record of the things worth keeping."
+  />
+
+  <section class="band-paper band" aria-labelledby="news-list-title">
+    <div class="shell">
+      <h2 id="news-list-title" class="sr-only">All news items</h2>
+
+      <Disclosure
+        peek="44rem"
+        moreLabel="Show older items"
+        lessLabel="Show recent only"
+        count={`${news.length} items`}
+        veil="paper"
+      >
+        <ol class="flex flex-col divide-y divide-line border-t border-line">
+          {
+            news.map((item, i) => (
+              <li>
+                <article class="group/card grid gap-5 py-8 md:grid-cols-[9rem_1fr]" data-reveal="rise" style={`--reveal-delay:${Math.min(i, 6) * 60}`}>
+                  <div class="flex flex-col gap-2">
+                    <time datetime={item.data.date.toISOString().slice(0, 10)} class="eyebrow text-muted">
+                      {item.data.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </time>
+                    <span class="tag self-start">{kindLabel[item.data.kind] ?? 'News'}</span>
+                  </div>
+
+                  <div>
+                    <h3 class="display-h3 text-crimson">{item.data.title}</h3>
+                    <p class="measure mt-3 text-body leading-relaxed text-ash">{item.data.summary}</p>
+                    {
+                      item.data.instagram && (
+                        <a
+                          href={item.data.instagram}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="link-underline mt-4 inline-flex items-center gap-2 text-small font-semibold"
+                        >
+                          <Icon name="instagram" size={15} /> On Instagram
+                        </a>
+                      )
+                    }
+                  </div>
+                </article>
+              </li>
+            ))
+          }
+        </ol>
+      </Disclosure>
+
+      <div class="mt-14 card flex flex-wrap items-center justify-between gap-6 p-8">
+        <span class="card-edge" aria-hidden="true"></span>
+        <div>
+          <h2 class="display-h3 text-crimson">The day-to-day is on Instagram</h2>
+          <p class="mt-2 max-w-[52ch] text-small leading-relaxed text-ash">
+            Six hundred posts and counting, from all forty cabinets. Camp recaps go up within days.
+          </p>
+        </div>
+        <Button href={site.instagram} variant="quiet" iconStart="instagram" external>
+          {site.instagramHandle}
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <DonateBand compact />
+</BaseLayout>

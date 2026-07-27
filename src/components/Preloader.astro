@@ -1,0 +1,329 @@
+---
+import { Image } from 'astro:assets';
+import logo from '@/assets/logo-ravish.png';
+import { site } from '@/data/site';
+---
+
+<div id="preloader" class="preloader" data-preloader aria-hidden="true">
+  <!-- the two cream panels that part to reveal the page -->
+  <span class="preloader-panel preloader-panel-a"></span>
+  <span class="preloader-panel preloader-panel-b"></span>
+
+  <div class="preloader-inner">
+    <div class="preloader-badge">
+      <!-- gradient ring drawing itself around the badge as the count climbs -->
+      <svg class="preloader-ring" viewBox="0 0 120 120" aria-hidden="true">
+        <defs>
+          <linearGradient id="pl-ring" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#A1080A" />
+            <stop offset="45%" stop-color="#E8481F" />
+            <stop offset="100%" stop-color="#F2A03D" />
+          </linearGradient>
+        </defs>
+        <circle class="preloader-ring-track" cx="60" cy="60" r="55" />
+        <circle class="preloader-ring-fill" cx="60" cy="60" r="55" pathLength="1" />
+      </svg>
+      <Image
+        src={logo}
+        alt=""
+        width={104}
+        height={104}
+        widths={[104, 208]}
+        quality={92}
+        loading="eager"
+        class="preloader-logo"
+      />
+    </div>
+
+    <p class="preloader-count">
+      <span data-preloader-count>0</span><span class="preloader-pct">%</span>
+    </p>
+
+    <div class="preloader-bar" aria-hidden="true"><span data-preloader-bar></span></div>
+
+    <p lang="ur" class="preloader-urdu">{site.tagline}</p>
+    <p class="preloader-roman">{site.taglineEnglish}</p>
+  </div>
+</div>
+
+<style>
+  .preloader {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: grid;
+    place-items: center;
+    background: var(--color-paper);
+    isolation: isolate;
+  }
+
+  /* the parting panels sit above the ground but below the content */
+  .preloader-panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 50.5%;
+    background: var(--color-paper);
+    z-index: 1;
+    transition: transform 1.05s cubic-bezier(0.76, 0, 0.24, 1);
+  }
+  .preloader-panel-a {
+    top: 0;
+  }
+  .preloader-panel-b {
+    bottom: 0;
+  }
+  /* a gradient hairline on the parting edge — the seam catches the light */
+  .preloader-panel-a::after,
+  .preloader-panel-b::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--sunrise);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .preloader-panel-a::after {
+    bottom: 0;
+  }
+  .preloader-panel-b::before {
+    top: 0;
+  }
+
+  .preloader-inner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-inline: 2rem;
+    transition:
+      opacity 0.45s ease,
+      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .preloader-badge {
+    position: relative;
+    width: 132px;
+    height: 132px;
+    display: grid;
+    place-items: center;
+  }
+
+  .preloader-ring {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .preloader-ring-track {
+    fill: none;
+    stroke: var(--color-line);
+    stroke-width: 2;
+  }
+  .preloader-ring-fill {
+    fill: none;
+    stroke: url(#pl-ring);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  .preloader-logo {
+    width: 104px;
+    height: 104px;
+    border-radius: 999px;
+    animation: preloader-breathe 2.6s ease-in-out infinite;
+  }
+
+  @keyframes preloader-breathe {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.035);
+    }
+  }
+
+  .preloader-count {
+    margin-top: 2rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-variant-numeric: oldstyle-nums tabular-nums;
+    font-size: clamp(3rem, 9vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    background: var(--sunrise-ink);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .preloader-pct {
+    font-size: 0.44em;
+    margin-left: 0.1em;
+    vertical-align: 0.7em;
+  }
+
+  .preloader-bar {
+    margin-top: 1.5rem;
+    width: min(19rem, 62vw);
+    height: 2px;
+    border-radius: 999px;
+    background: var(--color-line);
+    overflow: hidden;
+  }
+  .preloader-bar > span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: var(--sunrise);
+  }
+
+  .preloader-urdu {
+    margin-top: 2.25rem;
+    font-size: clamp(1.125rem, 3.4vw, 1.5rem);
+    color: var(--color-crimson);
+    text-align: center;
+    line-height: 2.2;
+  }
+  .preloader-roman {
+    margin-top: 0.25rem;
+    font-size: var(--text-caption);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  /* ---- exit ---- */
+  .preloader[data-state='out'] .preloader-inner {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  .preloader[data-state='out'] .preloader-panel-a::after,
+  .preloader[data-state='out'] .preloader-panel-b::before {
+    opacity: 1;
+  }
+  .preloader[data-state='out'] .preloader-panel-a {
+    transform: translateY(-101%);
+  }
+  .preloader[data-state='out'] .preloader-panel-b {
+    transform: translateY(101%);
+  }
+  .preloader[data-state='out'] {
+    background: transparent;
+    pointer-events: none;
+  }
+  .preloader[data-state='done'] {
+    display: none;
+  }
+
+  /* Nothing about this may trap a visitor. If the script never runs at all,
+     this dismisses the whole thing on its own. Deliberately well after the
+     script's own 4.2s ceiling, so it only ever fires when the script is dead —
+     otherwise it would fade out over a counter that is still climbing. */
+  .preloader {
+    animation: preloader-failsafe 0.01s linear 8s forwards;
+  }
+  @keyframes preloader-failsafe {
+    to {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+  .preloader[data-state='out'],
+  .preloader[data-state='done'] {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .preloader {
+      display: none;
+    }
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const el = document.getElementById('preloader');
+    if (!el) return;
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const seen = sessionStorage.getItem('ravish:intro') === '1';
+
+    const finish = () => {
+      el.dataset.state = 'done';
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    };
+
+    // Shown once per session, and never when motion is reduced.
+    if (reduce || seen) {
+      finish();
+      return;
+    }
+
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    const out = el.querySelector('[data-preloader-count]');
+    const bar = el.querySelector('[data-preloader-bar]');
+    const ring = el.querySelector('.preloader-ring-fill');
+
+    let shown = 0;
+    let real = 0;
+    let loaded = false;
+
+    window.addEventListener('load', () => {
+      loaded = true;
+    });
+
+    // Creep toward 90 on a timer, then let the real load event carry it home,
+    // so the number means something rather than being pure theatre.
+    const start = performance.now();
+    const tick = (now) => {
+      const t = (now - start) / 1000;
+      real = loaded ? 100 : Math.min(92, 100 * (1 - Math.exp(-t * 1.15)));
+      shown += (real - shown) * 0.12;
+
+      const v = Math.min(100, Math.round(shown));
+      if (out) out.textContent = String(v);
+      if (bar) bar.style.width = v + '%';
+      if (ring) ring.style.strokeDashoffset = String(1 - v / 100);
+
+      if (v >= 100 && loaded) {
+        sessionStorage.setItem('ravish:intro', '1');
+        el.dataset.state = 'out';
+        // let the panels finish parting, then take it out of the tree
+        setTimeout(finish, 1150);
+        return;
+      }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+
+    // hard ceiling — never hold the page longer than this
+    setTimeout(() => {
+      if (el.dataset.state !== 'done') {
+        sessionStorage.setItem('ravish:intro', '1');
+        el.dataset.state = 'out';
+        setTimeout(finish, 1150);
+      }
+    }, 4200);
+  })();
+</script>
+
+<noscript>
+  <style>
+    .preloader {
+      display: none;
+    }
+  </style>
+</noscript>

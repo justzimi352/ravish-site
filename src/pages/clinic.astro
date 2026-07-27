@@ -1,0 +1,338 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import Button from '@/components/Button.astro';
+import Icon from '@/components/Icon.astro';
+import DonateBand from '@/components/DonateBand.astro';
+import { clinic, site } from '@/data/site';
+
+import clinicPhoto from '@/assets/photos/volunteers-clinic.jpg';
+import elderPhoto from '@/assets/photos/portrait-elder-bowed.jpg';
+import registrationPhoto from '@/assets/photos/camp-registration.jpg';
+
+const mapQuery = encodeURIComponent(`${clinic.address}, Lahore, Pakistan`);
+
+const pathway = [
+  {
+    step: 'At the camp',
+    title: 'Someone is screened',
+    body: 'Every patient at a RAVISH camp has their blood pressure, blood glucose and BMI recorded. A camp of 300 people routinely turns up dozens of readings that need a second look.',
+  },
+  {
+    step: 'The old gap',
+    title: 'And then nothing happened',
+    body: 'Before September 2025 the referral was a sentence: see a doctor. For a family on a daily wage, that means a fee, a fare and a lost day of work. Most did not go.',
+  },
+  {
+    step: 'Now',
+    title: 'They are sent here',
+    body: 'The clinic is free, it is weekly, and it is in the neighbourhood most of those patients come from. The referral is now an address and a day.',
+  },
+  {
+    step: 'Over time',
+    title: 'Chronic care becomes possible',
+    body: 'Hypertension and diabetes are not treated in one visit. They are managed across many. A standing clinic is the only structure in which that can happen at all.',
+  },
+];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'MedicalClinic',
+  name: clinic.name,
+  parentOrganization: { '@type': 'Organization', name: site.publicName },
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: clinic.address,
+    addressLocality: 'Lahore',
+    addressRegion: 'Punjab',
+    addressCountry: 'PK',
+  },
+  telephone: site.phone,
+  email: site.email,
+  isAcceptingNewPatients: true,
+  priceRange: 'Free',
+  foundingDate: clinic.openedISO,
+};
+---
+
+<BaseLayout
+  title="The RAVISH Clinic"
+  description="A permanent free clinic near Androon Lahore, opened 14 September 2025. Weekly consultations, follow-ups and basic diagnostics — and the follow-up pathway for patients screened at RAVISH medical camps."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} slot="head" />
+
+  <PageHero
+    eyebrow="Opened 14 September 2025"
+    title="The RAVISH Clinic"
+    lead="A camp can find the problem. A clinic is what lets you do something about it next week, and the week after that. This is the piece that makes the rest of the programme coherent."
+  >
+    <div class="mt-hero flex flex-wrap gap-3" data-reveal="rise" style="--reveal-delay:280">
+      <Button href="/get-involved/volunteer" icon="arrowRight">Volunteer at the clinic</Button>
+      <Button
+        href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
+        variant="outline"
+        external
+        iconStart="pin"
+      >
+        Open in Maps
+      </Button>
+    </div>
+  </PageHero>
+
+  <!-- the quote from the inauguration -->
+  <section class="band-silk band-tight relative" aria-label="From the inauguration">
+    <span class="silk-weave" aria-hidden="true"></span>
+    <div class="shell-narrow relative">
+      <blockquote data-reveal="rise">
+        <p class="display-quote text-paper">
+          The term ‘Ravish’ signifies a path, and this clinic embodies that concept — a pathway to
+          dignity, healing, and hope. It represents more than merely a facility for treatment; it stands
+          as a commitment that compassion and care will consistently be accessible to those who need it.
+        </p>
+        <footer class="mt-7 text-small text-paper/92">
+          RAVISH, at the clinic’s inauguration — 14 September 2025
+        </footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- practical details -->
+  <section class="band-paper band" aria-labelledby="visiting-title">
+    <div class="shell">
+      <div class="grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
+        <div>
+          <SectionHead id="visiting-title" eyebrow="Visiting" title="Where it is, and when" />
+
+          <dl class="mt-10 flex flex-col divide-y divide-line border-y border-line">
+            <div class="grid gap-2 py-5 sm:grid-cols-[9rem_1fr]">
+              <dt class="eyebrow text-muted">Address</dt>
+              <dd class="text-body text-ash">
+                {clinic.address}
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="link-underline mt-2 block text-small font-semibold"
+                >
+                  Open in Google Maps
+                  <Icon name="arrowUpRight" size={13} class="ml-0.5 inline" />
+                </a>
+              </dd>
+            </div>
+            <div class="grid gap-2 py-5 sm:grid-cols-[9rem_1fr]">
+              <dt class="eyebrow text-muted">Opens</dt>
+              <dd class="text-body text-ash">
+                Weekly.
+                <span class="text-muted">
+                  The specific day and hours are confirmed on
+                  <a href={site.instagram} target="_blank" rel="noopener noreferrer" class="link-underline font-semibold">
+                    @ravishngo
+                  </a>
+                  each week — call ahead on {site.phone} if you are travelling any distance.
+                </span>
+              </dd>
+            </div>
+            <div class="grid gap-2 py-5 sm:grid-cols-[9rem_1fr]">
+              <dt class="eyebrow text-muted">Cost</dt>
+              <dd class="text-body text-ash">
+                Free. No registration fee, no consultation fee.
+                <span class="text-muted">Medicines are free subject to availability.</span>
+              </dd>
+            </div>
+            <div class="grid gap-2 py-5 sm:grid-cols-[9rem_1fr]">
+              <dt class="eyebrow text-muted">Attending</dt>
+              <dd class="text-body text-ash">
+                {clinic.doctor}, since {clinic.doctorSince}, with student volunteers on registration and
+                vitals.
+              </dd>
+            </div>
+            <div class="grid gap-2 py-5 sm:grid-cols-[9rem_1fr]">
+              <dt class="eyebrow text-muted">Established with</dt>
+              <dd class="text-body text-ash">
+                {clinic.partner} — {clinic.partnerRole}.
+              </dd>
+            </div>
+          </dl>
+
+          <h3 class="display-h3 mt-12 text-crimson">What the clinic offers</h3>
+          <ul class="mt-5 flex flex-col gap-3.5">
+            {
+              clinic.services.map((service, i) => (
+                <li class="flex gap-3 text-body text-ash" data-reveal="rise" style={`--reveal-delay:${i * 60}`}>
+                  <span class="mt-1 shrink-0 text-ember">
+                    <Icon name="check" size={18} />
+                  </span>
+                  <span>{service}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="flex flex-col gap-6">
+          <figure class="m-0" data-reveal="rise-lg">
+            <div class="img-frame card overflow-hidden rounded-[18px] p-0">
+              <Image
+                src={clinicPhoto}
+                alt="The RAVISH Clinic team in Lahore — four volunteers in the clinic room"
+                widths={[400, 640]}
+                sizes="(min-width:1024px) 46vw, 92vw"
+                quality={82}
+                class="aspect-[4/3] w-full object-cover"
+              />
+            </div>
+            <figcaption class="mt-3 text-caption text-muted">
+              The clinic team. House #171, DAV Hostel #2, Dev Samaj Road.
+            </figcaption>
+          </figure>
+
+          <div class="card p-7">
+            <p class="eyebrow text-crimson">Why Androon Lahore</p>
+            <p class="mt-4 text-small leading-relaxed text-ash">
+              The walled old city is dense, poorly served, and a few kilometres from some of the best
+              hospitals in the country. Proximity has never been the barrier. Cost is. A free clinic
+              inside the neighbourhood removes both the fare and the fee at once.
+            </p>
+          </div>
+
+          <figure class="m-0" data-reveal="rise-lg">
+            <div class="img-frame card overflow-hidden rounded-[18px] p-0">
+              <Image
+                src={registrationPhoto}
+                alt="A patient registering at a RAVISH medical camp"
+                widths={[400, 640]}
+                sizes="(min-width:1024px) 46vw, 92vw"
+                quality={82}
+                class="aspect-[16/10] w-full object-cover"
+              />
+            </div>
+            <figcaption class="mt-3 text-caption text-muted">
+              Registration at a camp — where most clinic referrals begin.
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- the pathway: why this matters structurally -->
+  <section class="band-paper-deep band" aria-labelledby="pathway-title">
+    <div class="shell">
+      <SectionHead
+        id="pathway-title"
+        eyebrow="The pathway"
+        title="What changed on 14 September 2025"
+        align="center"
+        lead="Not the number of patients. The shape of the care."
+      />
+
+      <ol class="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {
+          pathway.map((item, i) => (
+            <li class="card relative flex flex-col p-7" data-reveal="rise" style={`--reveal-delay:${i * 90}`}>
+              <span class="card-edge" aria-hidden="true" />
+              <span
+                class="font-display text-[2.5rem] leading-none font-semibold"
+                style="font-variant-numeric:oldstyle-nums;background:var(--sunrise-ink);-webkit-background-clip:text;background-clip:text;color:transparent"
+                aria-hidden="true"
+              >
+                {i + 1}
+              </span>
+              <p class="mt-4 eyebrow text-muted">{item.step}</p>
+              <h3 class="display-h3 mt-2 text-crimson">{item.title}</h3>
+              <p class="mt-3.5 text-small leading-relaxed text-ash">{item.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+
+      <figure class="mt-16 grid items-center gap-10 lg:grid-cols-[0.8fr_1.2fr]" data-reveal="rise-lg">
+        <div class="img-frame card overflow-hidden rounded-[18px] p-0">
+          <Image
+            src={elderPhoto}
+            alt="An elderly patient at a RAVISH medical camp"
+            widths={[400, 640]}
+            sizes="(min-width:1024px) 34vw, 92vw"
+            quality={84}
+            class="aspect-square w-full object-cover"
+          />
+        </div>
+        <blockquote class="m-0">
+          <p class="display-quote text-crimson">
+            A pathway to dignity, healing, and hope.
+          </p>
+          <p class="mt-6 measure text-body text-ash">
+            The clinic sees a fraction of the people a camp does. That is not the point of it. The point
+            is that for the first time, the sentence “come back and see us” means something RAVISH can
+            actually keep.
+          </p>
+        </blockquote>
+      </figure>
+    </div>
+  </section>
+
+  <!-- support -->
+  <section class="band-paper band" aria-labelledby="support-clinic-title">
+    <div class="shell">
+      <SectionHead
+        id="support-clinic-title"
+        eyebrow="Support the clinic"
+        title="What it takes to keep the doors open"
+        lead="A weekly free clinic runs on medicines, consumables and volunteer hours. All three are ongoing costs, not one-off ones."
+      />
+
+      <div class="mt-12 grid gap-6 md:grid-cols-3">
+        {
+          [
+            {
+              icon: 'heart' as const,
+              title: 'Give',
+              body: 'Funds are tracked on an activity-wise basis, so a contribution earmarked for the clinic is spent on the clinic.',
+              href: '/donate',
+              cta: 'Donate',
+            },
+            {
+              icon: 'users' as const,
+              title: 'Volunteer',
+              body: 'Registration, vitals, pharmacy and translation. You do not need to be a medical student for most of it.',
+              href: '/get-involved/volunteer',
+              cta: 'Sign up',
+            },
+            {
+              icon: 'building' as const,
+              title: 'Supply',
+              body: 'If you are a pharmacy, distributor, lab or hospital, in-kind support goes further here than cash does.',
+              href: '/get-involved/partner',
+              cta: 'Get in touch',
+            },
+          ].map((item, i) => (
+            <a
+              href={item.href}
+              class="card group/card flex flex-col p-8"
+              data-reveal="rise"
+              style={`--reveal-delay:${i * 90}`}
+            >
+              <span class="card-edge" aria-hidden="true" />
+              <span
+                class="flex h-12 w-12 items-center justify-center rounded-full text-crimson transition-colors duration-300 group-hover/card:text-ember"
+                style="background:color-mix(in oklab, var(--color-crimson) 7%, transparent)"
+              >
+                <Icon name={item.icon} size={22} />
+              </span>
+              <h3 class="display-h3 mt-5 text-crimson">{item.title}</h3>
+              <p class="mt-3 flex-1 text-small leading-relaxed text-ash">{item.body}</p>
+              <span class="mt-6 inline-flex items-center gap-2 text-small font-semibold text-crimson">
+                {item.cta}
+                <Icon name="arrowRight" size={16} class="transition-transform duration-400 group-hover/card:translate-x-1" />
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <DonateBand compact />
+</BaseLayout>

@@ -1,0 +1,224 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Button from '@/components/Button.astro';
+import CampCard from '@/components/CampCard.astro';
+import DonateBand from '@/components/DonateBand.astro';
+import LeafField from '@/components/LeafField.astro';
+
+export async function getStaticPaths() {
+  const camps = await getCollection('camps');
+  return camps.map((camp) => ({ params: { id: camp.id }, props: { camp } }));
+}
+
+const { camp } = Astro.props;
+const { Content } = await render(camp);
+const d = camp.data;
+
+const all = (await getCollection('camps')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const related = all.filter((c) => c.id !== camp.id).slice(0, 3);
+
+const kindLabel: Record<string, string> = {
+  general: 'Medical camp',
+  'flood-relief': 'Flood relief',
+  'label-step': 'Label STEP',
+  dental: 'Dental camp',
+  blood: 'Blood camp',
+  screening: 'Screening & drives',
+  clinic: 'Clinic',
+};
+
+const formatted = d.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<BaseLayout title={d.title} description={d.summary}>
+  <article>
+    <header class="band-paper relative overflow-hidden pt-14 pb-12 md:pt-20 md:pb-16">
+      <LeafField count={7} class="opacity-60" />
+
+      <div class="shell-narrow relative">
+        <nav aria-label="Breadcrumb" class="mb-8">
+          <ol class="flex flex-wrap items-center gap-2 text-caption text-muted">
+            <li><a href="/what-we-do" class="link-underline">What we do</a></li>
+            <li aria-hidden="true">/</li>
+            <li><a href="/what-we-do/medical-camps" class="link-underline">Medical camps</a></li>
+          </ol>
+        </nav>
+
+        <div class="flex flex-wrap items-center gap-3" data-reveal="rise">
+          <span class="tag">{kindLabel[d.kind] ?? 'Camp'}</span>
+          {d.chapter && <span class="eyebrow text-muted">{d.chapter} cabinet</span>}
+        </div>
+
+        <h1 class="display-h1 mt-5 text-crimson" data-reveal="rise" style="--reveal-delay:70">{d.title}</h1>
+
+        <div class="rule-sunrise mt-7" style="max-width:6rem;--reveal-delay:140" data-reveal="line" aria-hidden="true"></div>
+
+        <p class="lead mt-7 text-ash" data-reveal="rise" style="--reveal-delay:190">{d.summary}</p>
+
+        <dl class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4" data-reveal="rise" style="--reveal-delay:240">
+          <div>
+            <dt class="eyebrow text-muted">Date</dt>
+            <dd class="mt-1.5 text-small font-medium text-ash">
+              <time datetime={d.date.toISOString().slice(0, 10)}>{formatted}</time>
+            </dd>
+          </div>
+          <div>
+            <dt class="eyebrow text-muted">Location</dt>
+            <dd class="mt-1.5 text-small font-medium text-ash">{d.location}</dd>
+          </div>
+          {
+            d.patients && (
+              <div>
+                <dt class="eyebrow text-muted">Patients seen</dt>
+                <dd class="mt-1.5 text-small font-medium text-ash">{d.patients.toLocaleString('en-US')}</dd>
+              </div>
+            )
+          }
+          {
+            d.partners.length > 0 && (
+              <div>
+                <dt class="eyebrow text-muted">With</dt>
+                <dd class="mt-1.5 text-small font-medium text-ash">{d.partners.join(' · ')}</dd>
+              </div>
+            )
+          }
+        </dl>
+      </div>
+    </header>
+
+    <div class="band-paper pb-16 md:pb-24">
+      <div class="shell-narrow">
+        <div class="prose-ravish measure" data-reveal="rise">
+          <Content />
+        </div>
+
+        {
+          d.instagram && (
+            <div class="mt-10">
+              <Button href={d.instagram} variant="quiet" iconStart="instagram" external>
+                See this camp on Instagram
+              </Button>
+            </div>
+          )
+        }
+
+        <hr class="mt-14 border-line" />
+
+        <div class="mt-10 flex flex-wrap gap-3">
+          <Button href="/donate" icon="arrowRight">Fund the next camp</Button>
+          <Button href="/get-involved/volunteer" variant="outline">Volunteer at one</Button>
+        </div>
+      </div>
+    </div>
+
+    <section class="band-paper-deep band" aria-labelledby="related-title">
+      <div class="shell">
+        <div class="flex flex-wrap items-end justify-between gap-6">
+          <h2 id="related-title" class="display-h2 text-crimson" data-reveal="rise">More camps</h2>
+          <Button href="/what-we-do/medical-camps" variant="quiet" icon="arrowRight">The full archive</Button>
+        </div>
+        <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {
+            related.map((item, i) => (
+              <CampCard {...item.data} href={`/what-we-do/medical-camps/${item.id}`} index={i} />
+            ))
+          }
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <DonateBand compact />
+</BaseLayout>
+
+<style is:global>
+  /* Long-form markdown, kept inside the type scale */
+  .prose-ravish p {
+    font-size: var(--text-body);
+    line-height: 1.7;
+    color: var(--color-ash);
+    margin-bottom: 1.5rem;
+  }
+  .prose-ravish p:last-child {
+    margin-bottom: 0;
+  }
+  .prose-ravish h2 {
+    font-family: var(--font-display);
+    font-size: 1.875rem;
+    font-weight: 600;
+    color: var(--color-crimson);
+    margin-top: 2.75rem;
+    margin-bottom: 1rem;
+  }
+  .prose-ravish h3 {
+    font-family: var(--font-display);
+    font-size: 1.625rem;
+    font-weight: 500;
+    color: var(--color-crimson);
+    margin-top: 2.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .prose-ravish blockquote {
+    border-left: 2px solid color-mix(in oklab, var(--color-crimson) 28%, transparent);
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+  }
+  .prose-ravish blockquote p {
+    font-family: var(--font-display);
+    font-size: 1.625rem;
+    line-height: 1.36;
+    color: var(--color-crimson);
+    margin-bottom: 0;
+  }
+  .prose-ravish a {
+    color: var(--color-crimson);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-crimson) 35%, transparent);
+    text-underline-offset: 3px;
+  }
+  .prose-ravish a:hover {
+    text-decoration-color: var(--color-ember);
+  }
+  .prose-ravish ul,
+  .prose-ravish ol {
+    margin: 1.5rem 0;
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+  .prose-ravish li {
+    font-size: var(--text-body);
+    line-height: 1.7;
+    color: var(--color-ash);
+  }
+  .prose-ravish ul li {
+    list-style: none;
+    position: relative;
+  }
+  .prose-ravish ul li::before {
+    content: '';
+    position: absolute;
+    left: -1.375rem;
+    top: 0.85rem;
+    width: 0.875rem;
+    height: 2px;
+    border-radius: 999px;
+    background: var(--sunrise);
+  }
+  .prose-ravish ol li {
+    list-style: decimal;
+  }
+  .prose-ravish em {
+    font-style: italic;
+  }
+  .prose-ravish strong {
+    font-weight: 600;
+  }
+  .prose-ravish [lang='ur'] {
+    font-size: 1.375rem;
+    margin: 1.5rem 0;
+    color: var(--color-crimson);
+  }
+</style>

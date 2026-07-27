@@ -1,0 +1,163 @@
+---
+import { nav, site } from '@/data/site';
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isCurrent = (href: string) => path === href || (href !== '/' && path.startsWith(href + '/'));
+---
+
+<!-- the slim crimson rule their IMPACT decks run top and bottom -->
+<div class="bar-crimson h-[5px] w-full" aria-hidden="true"></div>
+
+<header class="nav-shell sticky top-0 z-40" data-nav>
+  <nav class="shell flex items-center justify-between gap-6 py-3.5" aria-label="Main">
+    <a href="/" class="flex shrink-0 items-center gap-3" aria-label={`${site.publicName} — home`}>
+      <Logo variant="badge" size={52} class="rounded-full" />
+      <span class="hidden flex-col leading-none sm:flex">
+        <span class="font-display text-2xl font-semibold tracking-[0.13em] text-crimson">RAVISH</span>
+        <span class="text-[0.6875rem] font-medium tracking-[0.055em] whitespace-nowrap text-muted uppercase">
+          The path of health
+        </span>
+      </span>
+    </a>
+
+    <ul class="hidden items-center gap-5 whitespace-nowrap lg:flex xl:gap-7">
+      {
+        nav.map((item) =>
+          item.children ? (
+            <li class="nav-group relative">
+              <a
+                href={item.href}
+                class="nav-link inline-flex items-center gap-1.5"
+                aria-current={isCurrent(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+                <Icon name="chevronDown" size={14} class="opacity-60" />
+              </a>
+              <div class="nav-pop absolute left-1/2 top-full z-50 w-[21rem] -translate-x-1/2 pt-3">
+                <div class="glass-card overflow-hidden p-2">
+                  {item.children.map((child) => (
+                    <a href={child.href} class="nav-pop-item group/pop">
+                      {/* a gradient rail that grows down the left edge, in place
+                          of the old dot — same device as the section rules */}
+                      <span class="nav-pop-rail" aria-hidden="true" />
+                      <span class="flex flex-1 flex-col">
+                        <span class="text-small font-semibold text-ash transition-colors duration-200 group-hover/pop:text-crimson">
+                          {child.label}
+                        </span>
+                        {child.note && <span class="mt-0.5 text-caption text-muted">{child.note}</span>}
+                      </span>
+                      <Icon name="arrowRight" size={15} class="nav-pop-arrow" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </li>
+          ) : (
+            <li>
+              <a href={item.href} class="nav-link" aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          )
+        )
+      }
+    </ul>
+
+    <div class="flex shrink-0 items-center gap-2.5">
+      <a href="/donate" class="btn btn-primary">Donate</a>
+      <button
+        type="button"
+        class="btn btn-quiet !px-3 lg:hidden"
+        data-drawer-open
+        aria-expanded="false"
+        aria-controls="mobile-drawer"
+        aria-label="Open menu"
+      >
+        <Icon name="menu" size={20} />
+      </button>
+    </div>
+  </nav>
+</header>
+
+<!-- mobile drawer -->
+<div
+  id="mobile-drawer"
+  class="drawer fixed inset-x-0 top-0 z-50 max-h-[100dvh] overflow-y-auto border-b border-line bg-paper shadow-lift lg:hidden"
+  data-drawer
+  data-open="false"
+>
+  <div class="shell flex items-center justify-between py-3.5">
+    <span class="font-display text-2xl font-semibold tracking-[0.13em] text-crimson">RAVISH</span>
+    <button type="button" class="btn btn-quiet !px-3" data-drawer-close aria-label="Close menu">
+      <Icon name="close" size={20} />
+    </button>
+  </div>
+  <hr class="border-line" />
+  <ul class="shell flex flex-col gap-1 py-5">
+    {
+      nav.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            class="flex items-center justify-between py-2.5 font-display text-h3 text-crimson"
+            aria-current={isCurrent(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+            <Icon name="arrowRight" size={18} class="opacity-45" />
+          </a>
+          {item.children && (
+            <ul class="mb-2 ml-1 flex flex-col gap-0.5 border-l border-line pl-4">
+              {item.children.map((child) => (
+                <li>
+                  <a href={child.href} class="block py-1.5 text-small text-ash">
+                    {child.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))
+    }
+    <li class="mt-4 flex flex-col gap-2.5">
+      <a href="/donate" class="btn btn-primary">Donate</a>
+      <a href="/get-involved/volunteer" class="btn btn-outline">Volunteer</a>
+    </li>
+  </ul>
+</div>
+
+<script>
+  // nav: paper-blur once you leave the hero
+  const shell = document.querySelector<HTMLElement>('[data-nav]');
+  if (shell) {
+    const sentinel = () => {
+      shell.dataset.stuck = window.scrollY > 12 ? 'true' : 'false';
+    };
+    sentinel();
+    window.addEventListener('scroll', sentinel, { passive: true });
+  }
+
+  // drawer
+  const drawer = document.querySelector<HTMLElement>('[data-drawer]');
+  const openBtn = document.querySelector<HTMLButtonElement>('[data-drawer-open]');
+  const closeBtn = document.querySelector<HTMLButtonElement>('[data-drawer-close]');
+
+  if (drawer && openBtn && closeBtn) {
+    const set = (open: boolean) => {
+      drawer.dataset.open = String(open);
+      openBtn.setAttribute('aria-expanded', String(open));
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+      if (open) closeBtn.focus();
+      else openBtn.focus();
+    };
+
+    openBtn.addEventListener('click', () => set(true));
+    closeBtn.addEventListener('click', () => set(false));
+    drawer.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => set(false)));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && drawer.dataset.open === 'true') set(false);
+    });
+  }
+</script>

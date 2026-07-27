@@ -1,0 +1,205 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import Field from '@/components/Field.astro';
+import Icon from '@/components/Icon.astro';
+import { site, clinic } from '@/data/site';
+
+const mapQuery = encodeURIComponent(`${clinic.address}, Lahore, Pakistan`);
+const mapEmbed = `https://www.google.com/maps?q=${mapQuery}&output=embed`;
+---
+
+<BaseLayout
+  title="Contact"
+  description={`Get in touch with RAVISH — ${site.email}, ${site.phone}, or visit the RAVISH Clinic near Androon Lahore.`}
+>
+  <PageHero
+    eyebrow="Get in touch"
+    title="Contact RAVISH"
+    lead="RAVISH is run by medical students around a full degree, so a reply can take a few days. If something is urgent, phone rather than email."
+  />
+
+  <section class="band-paper band" aria-labelledby="contact-title">
+    <div class="shell">
+      <div class="grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+        <!-- details -->
+        <div>
+          <SectionHead id="contact-title" eyebrow="Direct" title="How to reach us" />
+
+          <dl class="mt-10 flex flex-col divide-y divide-line border-y border-line">
+            <div class="grid gap-2 py-5 sm:grid-cols-[7rem_1fr]">
+              <dt class="eyebrow flex items-center gap-2 text-muted">
+                <Icon name="mail" size={15} /> Email
+              </dt>
+              <dd>
+                <a href={`mailto:${site.email}`} class="link-underline text-body font-medium">
+                  {site.email}
+                </a>
+              </dd>
+            </div>
+            <div class="grid gap-2 py-5 sm:grid-cols-[7rem_1fr]">
+              <dt class="eyebrow flex items-center gap-2 text-muted">
+                <Icon name="phone" size={15} /> Phone
+              </dt>
+              <dd>
+                <a href={`tel:${site.phoneHref}`} class="link-underline text-body font-medium">
+                  {site.phone}
+                </a>
+                <p class="mt-1 text-caption text-muted">Also on WhatsApp.</p>
+              </dd>
+            </div>
+            <div class="grid gap-2 py-5 sm:grid-cols-[7rem_1fr]">
+              <dt class="eyebrow flex items-center gap-2 text-muted">
+                <Icon name="instagram" size={15} /> Social
+              </dt>
+              <dd class="flex flex-col gap-1.5">
+                <a href={site.instagram} target="_blank" rel="noopener noreferrer" class="link-underline text-body font-medium">
+                  {site.instagramHandle}
+                  <Icon name="arrowUpRight" size={13} class="ml-0.5 inline" />
+                </a>
+                <a href={site.linkedin} target="_blank" rel="noopener noreferrer" class="link-underline text-body font-medium">
+                  RAVISH on LinkedIn
+                  <Icon name="arrowUpRight" size={13} class="ml-0.5 inline" />
+                </a>
+              </dd>
+            </div>
+            <div class="grid gap-2 py-5 sm:grid-cols-[7rem_1fr]">
+              <dt class="eyebrow flex items-center gap-2 text-muted">
+                <Icon name="pin" size={15} /> Clinic
+              </dt>
+              <dd>
+                <p class="text-body text-ash">{clinic.address}</p>
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="link-underline mt-1.5 inline-block text-small font-semibold"
+                >
+                  Open in Google Maps
+                  <Icon name="arrowUpRight" size={13} class="ml-0.5 inline" />
+                </a>
+              </dd>
+            </div>
+            <div class="grid gap-2 py-5 sm:grid-cols-[7rem_1fr]">
+              <dt class="eyebrow flex items-center gap-2 text-muted">
+                <Icon name="building" size={15} /> Based
+              </dt>
+              <dd class="text-body text-ash">{site.hq}</dd>
+            </div>
+          </dl>
+
+          <!-- map -->
+          <div class="card mt-10 overflow-hidden p-0" data-reveal="rise-lg">
+            <iframe
+              src={mapEmbed}
+              title={`Map showing the location of the ${clinic.name}`}
+              width="600"
+              height="340"
+              style="border:0;width:100%;height:340px"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
+
+          <div class="mt-8 card p-7">
+            <span class="card-edge" aria-hidden="true"></span>
+            <p class="eyebrow text-crimson">Looking for your local cabinet?</p>
+            <p class="mt-4 text-small leading-relaxed text-ash">
+              Chapter emails follow a consistent pattern —
+              <code class="rounded bg-paper px-1.5 py-0.5 text-caption">{'{abbr}'}.ravishngo@gmail.com</code>
+              — and most cabinets are quicker to answer on Instagram.
+            </p>
+            <a href="/chapters" class="link-underline mt-4 inline-flex items-center gap-2 text-small font-semibold">
+              Find your cabinet <Icon name="arrowRight" size={15} />
+            </a>
+          </div>
+        </div>
+
+        <!-- form -->
+        <div>
+          <h2 class="display-h2 text-crimson" data-reveal="rise">Send a message</h2>
+          <div class="rule-sunrise mt-6" style="max-width:5rem" data-reveal="line" aria-hidden="true"></div>
+
+          <form
+            name="contact"
+            method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            action="/get-involved/thanks/"
+            class="mt-9 flex flex-col gap-6"
+          >
+            <input type="hidden" name="form-name" value="contact" />
+            <p class="hidden">
+              <label>Leave this empty <input name="bot-field" /></label>
+            </p>
+
+            <div class="grid gap-6 sm:grid-cols-2">
+              <Field label="Your name" name="name" required autocomplete="name" />
+              <Field label="Email" name="email" type="email" required autocomplete="email" />
+            </div>
+
+            <Field
+              label="What is this about?"
+              name="topic"
+              type="select"
+              required
+              options={[
+                'Volunteering',
+                'Starting a cabinet at my college',
+                'Partnership or collaboration',
+                'A donation, or a question about one',
+                'Press or media',
+                'The RAVISH Clinic',
+                'Something else',
+              ]}
+            />
+
+            <Field label="Phone" name="phone" type="tel" autocomplete="tel" />
+
+            <Field
+              label="Message"
+              name="message"
+              type="textarea"
+              required
+              rows={7}
+              placeholder="Tell us what you need."
+            />
+
+            <label class="flex cursor-pointer items-start gap-3 text-small text-ash">
+              <input
+                type="checkbox"
+                name="consent"
+                value="yes"
+                required
+                class="mt-1 h-4 w-4 shrink-0 cursor-pointer accent-crimson"
+              />
+              <span>
+                I am happy for RAVISH to reply to me at the address above.
+                <span class="text-ember">*</span>
+              </span>
+            </label>
+
+            <div class="flex flex-wrap items-center gap-4 pt-2">
+              <button type="submit" class="btn btn-primary px-7 py-4 text-body">
+                Send message
+                <Icon name="send" size={17} />
+              </button>
+              <p class="text-caption text-muted">We read everything that comes in.</p>
+            </div>
+          </form>
+
+          <div class="card mt-8 flex items-start gap-4 p-7">
+            <span class="card-edge" aria-hidden="true"></span>
+            <Icon name="shield" size={19} class="mt-0.5 shrink-0 text-crimson" />
+            <p class="text-small leading-relaxed text-ash">
+              <strong class="font-semibold">Please do not send medical details.</strong> This form is not a
+              clinical channel and is not monitored for emergencies. If you need urgent care, go to your
+              nearest hospital.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

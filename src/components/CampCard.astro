@@ -1,0 +1,121 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  title: string;
+  date: Date;
+  location: string;
+  city: string;
+  chapter?: string;
+  patients?: number;
+  kind?: string;
+  partners?: string[];
+  summary: string;
+  href?: string;
+  instagram?: string;
+  index?: number;
+}
+
+const {
+  title,
+  date,
+  location,
+  chapter,
+  patients,
+  kind = 'general',
+  partners = [],
+  summary,
+  href,
+  instagram,
+  index = 0,
+} = Astro.props;
+
+const kindLabel: Record<string, string> = {
+  general: 'Medical camp',
+  'flood-relief': 'Flood relief',
+  'label-step': 'Label STEP',
+  dental: 'Dental camp',
+  blood: 'Blood camp',
+  screening: 'Screening',
+  clinic: 'Clinic',
+};
+
+const formatted = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+const Tag = href ? 'a' : 'article';
+---
+
+<Tag
+  href={href}
+  class="card group/card flex flex-col overflow-hidden p-7"
+  data-reveal="rise"
+  style={`--reveal-delay:${index * 70}`}
+>
+  <span class="card-edge" aria-hidden="true"></span>
+
+  <div class="flex flex-wrap items-center gap-2.5">
+    <span class="tag">{kindLabel[kind] ?? 'Camp'}</span>
+    {chapter && <span class="text-caption font-semibold tracking-[0.05em] text-muted uppercase">{chapter}</span>}
+  </div>
+
+  <h3 class="display-h3 mt-4 text-crimson">{title}</h3>
+
+  <dl class="mt-3.5 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-caption text-muted">
+    <div class="flex items-center gap-1.5">
+      <dt class="sr-only">Date</dt>
+      <Icon name="calendar" size={14} />
+      <dd><time datetime={date.toISOString().slice(0, 10)}>{formatted}</time></dd>
+    </div>
+    <div class="flex items-center gap-1.5">
+      <dt class="sr-only">Location</dt>
+      <Icon name="pin" size={14} />
+      <dd>{location}</dd>
+    </div>
+  </dl>
+
+  <p class="mt-4 flex-1 text-small leading-relaxed text-ash">{summary}</p>
+
+  {
+    patients && (
+      <p class="mt-5 flex items-baseline gap-2 border-t border-line pt-5">
+        <span
+          class="font-display text-[2.125rem] leading-none font-semibold"
+          style="font-variant-numeric:oldstyle-nums;background:var(--sunrise-ink);-webkit-background-clip:text;background-clip:text;color:transparent"
+        >
+          {patients.toLocaleString('en-US')}
+        </span>
+        <span class="text-caption font-semibold tracking-[0.06em] text-muted uppercase">patients seen</span>
+      </p>
+    )
+  }
+
+  {
+    partners.length > 0 && (
+      <p class="mt-4 text-caption text-muted">
+        With {partners.join(' · ')}
+      </p>
+    )
+  }
+
+  <div class="mt-5 flex items-center gap-4">
+    {
+      href && (
+        <span class="inline-flex items-center gap-2 text-small font-semibold text-crimson">
+          Read the recap
+          <Icon name="arrowRight" size={15} class="transition-transform duration-400 group-hover/card:translate-x-1" />
+        </span>
+      )
+    }
+    {
+      instagram && !href && (
+        <a
+          href={instagram}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 text-small font-semibold text-crimson link-underline"
+        >
+          <Icon name="instagram" size={15} /> On Instagram
+        </a>
+      )
+    }
+  </div>
+</Tag>

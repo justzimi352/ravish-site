@@ -1,0 +1,40 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LeafField from '@/components/LeafField.astro';
+import Button from '@/components/Button.astro';
+import Logo from '@/components/Logo.astro';
+import { site } from '@/data/site';
+---
+
+<BaseLayout title="Thank you" description="Your message has reached RAVISH.">
+  <section class="band-paper relative overflow-hidden band">
+    <LeafField count={14} />
+
+    <div class="shell-narrow relative text-center">
+      <Logo variant="badge" size={96} class="mx-auto rounded-full shadow-card" />
+
+      <h1 class="display-h1 mt-10 text-crimson" data-reveal="rise">Thank you — it has reached us.</h1>
+
+      <div class="rule-sunrise mx-auto mt-8" style="max-width:7rem" data-reveal="line" aria-hidden="true"></div>
+
+      <p class="lead mx-auto mt-8 measure-tight" data-reveal="rise" style="--reveal-delay:90">
+        Someone from the relevant cabinet will be in touch. RAVISH is run by medical students around a
+        full degree, so it may take a few days — if it takes longer than a week, write to
+        <a href={`mailto:${site.email}`} class="link-underline font-semibold">{site.email}</a> and chase us.
+      </p>
+
+      <p lang="ur" class="urdu-tagline mt-10 text-center text-crimson" data-reveal="rise" style="--reveal-delay:150">
+        خَیرُ النّاسِ أَنفَعُهُم لِلنّاسِ
+      </p>
+      <p class="mt-1 text-small text-muted italic" data-reveal="fade">
+        “The best of people are those who are most beneficial to others.”
+      </p>
+
+      <div class="mt-12 flex flex-wrap justify-center gap-3" data-reveal="rise">
+        <Button href="/" icon="arrowRight">Back to the homepage</Button>
+        <Button href="/what-we-do" variant="outline">See what we do</Button>
+        <Button href={site.instagram} variant="quiet" iconStart="instagram" external>Follow along</Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

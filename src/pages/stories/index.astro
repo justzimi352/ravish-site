@@ -1,0 +1,146 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import VoiceCard from '@/components/VoiceCard.astro';
+import Disclosure from '@/components/Disclosure.astro';
+import DonateBand from '@/components/DonateBand.astro';
+import Icon from '@/components/Icon.astro';
+import { voices, sayings } from '@/data/voices';
+
+const stories = (await getCollection('stories')).sort(
+  (a, b) => (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0)
+);
+const otherVoices = voices.filter((v) => !v.featured);
+---
+
+<BaseLayout
+  title="Stories"
+  description="Volunteer and patient voices from RAVISH camps, clinics, relief deployments and welfare visits — in the organisation's own words."
+>
+  <PageHero
+    eyebrow="In their own words"
+    title="We came to make a difference, they ended up changing us"
+    lead="RAVISH writes about its own work reflectively rather than triumphantly, and it is the most distinctive thing about the organisation. These are their words, taken from the archive."
+  />
+
+  <!-- written-up stories -->
+  <section class="band-paper band" aria-labelledby="stories-title">
+    <div class="shell">
+      <SectionHead
+        id="stories-title"
+        eyebrow="Written up"
+        title="The longer pieces"
+        lead="Volunteers and cabinets writing about a specific day."
+      />
+
+      <div class="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {
+          stories.map((story, i) => (
+            <a
+              href={`/stories/${story.id}`}
+              class="card group/card flex flex-col p-7"
+              data-reveal="rise"
+              style={`--reveal-delay:${i * 70}`}
+            >
+              <span class="card-edge" aria-hidden="true" />
+              <span
+                class="font-display leading-none select-none"
+                style="font-size:3rem;color:var(--color-saffron);opacity:.85"
+                aria-hidden="true">&ldquo;</span
+              >
+              <p class="display-h3 -mt-3 text-crimson">{story.data.excerpt}</p>
+
+              <div class="mt-auto flex flex-col gap-1 border-t border-line pt-5">
+                <span class="text-small font-semibold text-ash">{story.data.voice}</span>
+                <span class="text-caption text-muted">{story.data.role}</span>
+              </div>
+
+              <span class="mt-5 inline-flex items-center gap-2 text-small font-semibold text-crimson">
+                Read it
+                <Icon
+                  name="arrowRight"
+                  size={15}
+                  class="transition-transform duration-400 group-hover/card:translate-x-1"
+                />
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- shorter voices -->
+  <section class="band-paper-deep band" aria-labelledby="voices-title">
+    <div class="shell">
+      <SectionHead
+        id="voices-title"
+        eyebrow="From the archive"
+        title="Shorter voices"
+        lead="Lines from camp recaps, relief deployments and welfare visits, published by RAVISH and its cabinets between 2024 and 2026."
+      />
+
+      <div class="mt-14">
+        <Disclosure
+          peek="30rem"
+          moreLabel="Show every voice"
+          lessLabel="Show fewer"
+          count={`${otherVoices.length} entries`}
+          veil="paper-deep"
+        >
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {otherVoices.map((voice, i) => <VoiceCard {...voice} index={Math.min(i, 6)} />)}
+          </div>
+        </Disclosure>
+      </div>
+    </div>
+  </section>
+
+  <!-- the faith register -->
+  <section class="band-silk band relative" aria-labelledby="sayings-title">
+    <span class="silk-weave" aria-hidden="true"></span>
+    <div class="shell-narrow relative">
+      <SectionHead
+        id="sayings-title"
+        eyebrow="The register"
+        title="Faith-inflected, never sectarian"
+        tone="cream"
+        lead="RAVISH's English paragraphs are routinely paired with an Urdu line or a hadith. It is part of the voice, and it is worth keeping."
+      />
+
+      <div class="mt-14 flex flex-col gap-10">
+        {
+          sayings.map((saying, i) => (
+            <figure class="m-0 border-l-2 border-gold/40 pl-6" data-reveal="rise" style={`--reveal-delay:${i * 90}`}>
+              <p lang="ur" class="text-[1.5rem] text-gold" style="line-height:2.25">
+                {saying.urdu}
+              </p>
+              <figcaption class="mt-3 text-body text-paper/92 italic">“{saying.english}”</figcaption>
+            </figure>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- contribute -->
+  <section class="band-paper band-tight" aria-labelledby="contribute-title">
+    <div class="shell-narrow">
+      <div class="card p-8" data-reveal="rise">
+        <span class="card-edge" aria-hidden="true"></span>
+        <h2 id="contribute-title" class="display-h3 text-crimson">Volunteered with us? Write it down.</h2>
+        <p class="mt-4 text-body leading-relaxed text-ash">
+          There are hundreds of these in the Instagram archive and almost none of them are written up
+          properly. If you volunteered at a camp, a drive or the clinic, send a few hundred words to
+          <a href="mailto:ravishngo@gmail.com" class="link-underline font-semibold">ravishngo@gmail.com</a>
+          — one specific day, one specific patient, what you actually thought. That is more useful than any
+          statistic on this website.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <DonateBand compact />
+</BaseLayout>

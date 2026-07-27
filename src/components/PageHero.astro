@@ -1,0 +1,77 @@
+---
+import LeafField from './LeafField.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  urdu?: string;
+  leaves?: boolean;
+  /** anchor the scroll cue points at */
+  next?: string;
+}
+
+const { eyebrow, title, lead, urdu, leaves = true, next } = Astro.props;
+
+// Split the title so each line can rise out of its own mask.
+const words = title.split(' ');
+const mid = Math.ceil(words.length / 2);
+const lines = words.length > 4 ? [words.slice(0, mid).join(' '), words.slice(mid).join(' ')] : [title];
+---
+
+<section class="band-paper band-hero relative overflow-hidden" aria-label="Page introduction">
+  {leaves && <LeafField count={12} class="opacity-75" />}
+
+  <div class="shell relative w-full">
+    {
+      eyebrow && (
+        <p class="eyebrow text-crimson" data-reveal="rise">
+          {eyebrow}
+        </p>
+      )
+    }
+
+    <h1 class="hero-title mt-hero-sm max-w-[22ch] text-crimson" data-reveal="fade">
+      {lines.map((line, i) => (
+        <span class="line-mask" style={`--line-i:${i}`}>
+          <span>{line}</span>
+        </span>
+      ))}
+    </h1>
+
+    {
+      urdu && (
+        <p lang="ur" class="urdu-tagline mt-hero-xs text-ash/85" data-reveal="rise" style="--reveal-delay:320">
+          {urdu}
+        </p>
+      )
+    }
+
+    <div
+      class="rule-sunrise mt-hero-sm"
+      style="max-width:7rem;--reveal-delay:360"
+      data-reveal="line"
+      aria-hidden="true"
+    >
+    </div>
+
+    {
+      lead && (
+        <p class="hero-lead measure mt-hero" data-reveal="rise" style="--reveal-delay:420">
+          {lead}
+        </p>
+      )
+    }
+
+    <slot />
+
+    {
+      next && (
+        <a href={next} class="scroll-cue mt-hero hidden md:inline-flex" data-reveal="fade" style="--reveal-delay:560">
+          <span class="scroll-cue-track" aria-hidden="true" />
+          Keep reading
+        </a>
+      )
+    }
+  </div>
+</section>

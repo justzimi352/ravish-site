@@ -1,0 +1,178 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import Disclosure from '@/components/Disclosure.astro';
+import Button from '@/components/Button.astro';
+import Icon from '@/components/Icon.astro';
+import DonateBand from '@/components/DonateBand.astro';
+import { governance } from '@/data/timeline';
+import { chapters, cabinetCities } from '@/data/chapters';
+import { site } from '@/data/site';
+
+const active = chapters.filter((c) => !c.dormant).length;
+
+const departments = [
+  { name: 'Events', body: 'Plans and runs the camps, drives and visits. The department everything else exists to support.' },
+  { name: 'Media', body: 'Photography, video and the cabinet’s Instagram. Documentation is how a camp becomes evidence.' },
+  { name: 'Information', body: 'Internal communication, announcements, and keeping several hundred volunteers reachable.' },
+  { name: 'Academics', body: 'Webinars, study sessions and the academic side of the cabinet’s year.' },
+  { name: 'External Affairs', body: 'Partner hospitals, NGOs, sponsors and the local officials whose permission a camp needs.' },
+  { name: 'Finance', body: 'Budgets, collection and activity-wise tracking of every rupee raised and spent.' },
+  { name: 'Logistics', body: 'Venue, transport, equipment, medicines and the fact that all of it has to be in the same place at 8am.' },
+];
+
+const officeBearers = [
+  { role: 'President', body: 'Runs the cabinet, represents it to the National Cabinet, and is accountable for the year.' },
+  { role: 'Vice President', body: 'Deputises, and usually carries the operational load on event days.' },
+  { role: 'General Secretary', body: 'Records, correspondence, coordination between departments.' },
+];
+---
+
+<BaseLayout
+  title="Join a cabinet"
+  description="Start or join a RAVISH local cabinet at your medical or dental college — three office bearers, seven departments, and a term that runs July to June."
+>
+  <PageHero
+    eyebrow={`${active}+ cabinets, in ${cabinetCities.length} cities`}
+    title="Run RAVISH at your own college"
+    lead="A local cabinet is not a club with a name on it. It plans and funds its own camps, holds its own partnerships, and reports its own numbers into the national total."
+  />
+
+  <section class="band-paper band" aria-labelledby="structure-title">
+    <div class="shell">
+      <SectionHead
+        id="structure-title"
+        eyebrow="The structure"
+        title="Three office bearers, seven departments"
+        lead={governance.term}
+      />
+
+      <div class="mt-14 grid gap-6 md:grid-cols-3">
+        {
+          officeBearers.map((item, i) => (
+            <div class="card flex flex-col p-7" data-reveal="rise" style={`--reveal-delay:${i * 85}`}>
+              <span class="card-edge" aria-hidden="true" />
+              <h3 class="display-h3 text-crimson">{item.role}</h3>
+              <p class="mt-3 text-small leading-relaxed text-ash">{item.body}</p>
+            </div>
+          ))
+        }
+      </div>
+
+      <h3 class="display-h3 mt-16 text-crimson" data-reveal="rise">The departments</h3>
+      <div class="mt-8">
+        <Disclosure peek="17rem" moreLabel="See all seven departments" lessLabel="Show fewer" count="7 departments" veil="paper">
+          <ul class="grid gap-4 md:grid-cols-2">
+            {
+              departments.map((dept, i) => (
+                <li class="card flex gap-4 p-6" data-reveal="rise" style={`--reveal-delay:${Math.min(i, 6) * 55}`}>
+                  <span class="card-edge" aria-hidden="true" />
+                  <span
+                    class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-crimson"
+                    style="background:color-mix(in oklab, var(--color-crimson) 7%, transparent)"
+                  >
+                    <Icon name="check" size={16} />
+                  </span>
+                  <div>
+                    <h4 class="text-body font-semibold text-ash">{dept.name}</h4>
+                    <p class="mt-1.5 text-small leading-relaxed text-muted">{dept.body}</p>
+                  </div>
+                </li>
+              ))
+            }
+          </ul>
+        </Disclosure>
+      </div>
+    </div>
+  </section>
+
+  <section class="band-paper-deep band" aria-labelledby="regional-title">
+    <div class="shell">
+      <div class="grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
+        <div>
+          <SectionHead id="regional-title" eyebrow="New for 2026–27" title="Regional Coordinators" />
+          <p class="measure mt-8 text-body leading-relaxed text-ash">{governance.regional}</p>
+          <p class="measure mt-5 text-body leading-relaxed text-ash">
+            The reason it exists is arithmetic. Forty-plus cabinets is more than one national cabinet can
+            mentor directly, and the failure mode of a federated student organisation is a chapter going
+            quiet for a term with nobody noticing.
+          </p>
+          <p class="measure mt-5 text-body leading-relaxed text-ash">
+            Dr. Laiba Zahoor holds the role for Lahore Suburban, appointed July 2026.
+          </p>
+        </div>
+
+        <div class="card self-start p-8" data-reveal="rise-lg">
+          <span class="card-edge" aria-hidden="true"></span>
+          <p class="eyebrow text-crimson">Eligibility</p>
+          <p class="mt-4 text-body leading-relaxed text-ash">{governance.eligibility}</p>
+          <hr class="my-7 border-line" />
+          <p class="eyebrow text-crimson">The term</p>
+          <p class="mt-4 text-body leading-relaxed text-ash">
+            July to June. Applications for local cabinet president typically open in the spring — RAVISH
+            posted the 2025–26 call on 12 April 2025 — and are announced on Instagram.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band-paper band" aria-labelledby="start-title">
+    <div class="shell-narrow">
+      <SectionHead
+        id="start-title"
+        eyebrow="No cabinet at your college?"
+        title="How to start one"
+        lead="Most of the forty started exactly this way — one student who asked."
+      />
+
+      <ol class="mt-12 flex flex-col gap-5">
+        {
+          [
+            {
+              title: 'Write to the National Cabinet',
+              body: `Email ${site.email} with your name, year, college and city. Say plainly that you want to found a cabinet.`,
+            },
+            {
+              title: 'Find your first five',
+              body: 'A cabinet needs three office bearers and enough volunteers to staff a registration desk. Five committed people is a real start; thirty names on a list is not.',
+            },
+            {
+              title: 'Run one camp',
+              body: 'The National Cabinet will help you plan it, and an existing nearby cabinet will usually lend hands. One completed camp is what turns an application into a chapter.',
+            },
+            {
+              title: 'Then build the departments',
+              body: 'Events and Logistics first, because they are what a camp needs. Media next, because undocumented work cannot be reported. The rest follows.',
+            },
+          ].map((step, i) => (
+            <li class="card flex gap-5 p-7" data-reveal="rise" style={`--reveal-delay:${i * 80}`}>
+              <span class="card-edge" aria-hidden="true" />
+              <span
+                class="font-display text-[2.25rem] leading-none font-semibold"
+                style="font-variant-numeric:oldstyle-nums;background:var(--sunrise-ink);-webkit-background-clip:text;background-clip:text;color:transparent"
+                aria-hidden="true"
+              >
+                {i + 1}
+              </span>
+              <div>
+                <h3 class="display-h3 text-crimson">{step.title}</h3>
+                <p class="mt-2.5 text-small leading-relaxed text-ash">{step.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="mt-10 flex flex-wrap gap-3" data-reveal="rise">
+        <Button href={`mailto:${site.email}?subject=Starting%20a%20RAVISH%20cabinet`} iconStart="mail">
+          Email the National Cabinet
+        </Button>
+        <Button href="/chapters" variant="outline">See the existing cabinets</Button>
+      </div>
+    </div>
+  </section>
+
+  <DonateBand compact />
+</BaseLayout>

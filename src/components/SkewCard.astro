@@ -1,0 +1,316 @@
+---
+import Icon from './Icon.astro';
+import type { IconName } from './icons';
+
+/**
+ * Twin skewed gradient panels behind a glass content panel. On hover the
+ * panels straighten and spread, the content slides across them, and two soft
+ * blobs drift out past the corners.
+ *
+ * Ported from the React/Tailwind original to plain Astro — the whole effect is
+ * CSS transforms, so it needs no framework and ships no JavaScript. The neon
+ * demo gradients are replaced with the RAVISH sunrise ramp.
+ */
+interface Props {
+  title: string;
+  eyebrow?: string;
+  body: string;
+  href?: string;
+  cta?: string;
+  icon?: IconName;
+  badge?: string;
+  /** which gradient pair from the RAVISH ramp */
+  tone?: 0 | 1 | 2 | 3;
+  index?: number;
+  class?: string;
+}
+
+const {
+  title,
+  eyebrow,
+  body,
+  href,
+  cta = 'Read more',
+  icon,
+  badge,
+  tone = 0,
+  index = 0,
+  class: className = '',
+} = Astro.props;
+
+// Sampled from the logo and the IMPACT decks — no colour here is invented.
+const ramps = [
+  { from: '#A1080A', to: '#E8481F' }, // wordmark crimson → ember
+  { from: '#E8481F', to: '#F2A03D' }, // ember → the drifting leaves
+  { from: '#F26B1F', to: '#FDCC4C' }, // flame → silk highlight
+  { from: '#7C0608', to: '#F26B1F' }, // deep crimson → flame
+];
+const ramp = ramps[tone % 4];
+const gradient = `linear-gradient(315deg, ${ramp.from}, ${ramp.to})`;
+
+const Tag = href ? 'a' : 'div';
+---
+
+<Tag
+  href={href}
+  class={`skew-card group/skew ${href ? 'cursor-pointer' : ''} ${className}`}
+  data-reveal="rise"
+  style={`--reveal-delay:${index * 70}`}
+>
+  <!-- the two skewed panels: one solid, one blurred behind it as the glow -->
+  <span class="skew-panel" style={`background:${gradient}`} aria-hidden="true"></span>
+  <span class="skew-panel skew-panel-glow" style={`background:${gradient}`} aria-hidden="true"></span>
+
+  <!-- drifting blobs -->
+  <span class="skew-blobs" aria-hidden="true">
+    <span class="skew-blob skew-blob-a"></span>
+    <span class="skew-blob skew-blob-b"></span>
+  </span>
+
+  <div class="skew-content">
+    <div class="flex items-start justify-between gap-4">
+      {
+        icon && (
+          <span class="skew-icon">
+            <Icon name={icon} size={22} />
+          </span>
+        )
+      }
+      {badge && <span class="tag shrink-0">{badge}</span>}
+    </div>
+
+    <h3 class="display-h3 mt-5 text-crimson">{title}</h3>
+    {eyebrow && <p class="mt-2 eyebrow text-muted">{eyebrow}</p>}
+
+    <p class="skew-body mt-4 text-small leading-relaxed text-ash">{body}</p>
+
+    {
+      href && (
+        <span class="skew-cta">
+          {cta}
+          <Icon name="arrowRight" size={16} />
+        </span>
+      )
+    }
+  </div>
+</Tag>
+
+<style>
+  .skew-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 27rem;
+    padding-top: 2.5rem;
+    text-decoration: none;
+  }
+
+  /* --- the skewed panels -------------------------------------------
+     The original card floats near-transparent glass over a dark page, so its
+     gradient reads straight through the content. On a cream page that would
+     wreck the text contrast, so instead the slab sits OUTSIDE the content
+     card — a vivid skewed backing that shows above, below and to the right,
+     and spreads wider as the panel straightens on hover. */
+  .skew-panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 14%;
+    width: 72%;
+    border-radius: 16px;
+    transform: skewX(15deg);
+    transition:
+      transform 0.55s var(--ease-expo),
+      left 0.55s var(--ease-expo),
+      width 0.55s var(--ease-expo);
+  }
+
+  .skew-panel-glow {
+    filter: blur(26px);
+    opacity: 0.75;
+  }
+
+  .skew-card:hover .skew-panel,
+  .skew-card:focus-within .skew-panel {
+    transform: skewX(0deg);
+    left: 5%;
+    width: 90%;
+  }
+
+  /* --- blobs ------------------------------------------------------- */
+  .skew-blobs {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .skew-blob {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-radius: 14px;
+    opacity: 0;
+    background: rgb(255 248 236 / 0.55);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 5px 15px rgb(90 52 20 / 0.1);
+    animation: skew-blob 3.4s ease-in-out infinite;
+    transition:
+      top 0.5s var(--ease-expo),
+      left 0.5s var(--ease-expo),
+      right 0.5s var(--ease-expo),
+      bottom 0.5s var(--ease-expo),
+      width 0.5s var(--ease-expo),
+      height 0.5s var(--ease-expo),
+      opacity 0.5s ease;
+  }
+  .skew-blob-a {
+    top: 0;
+    left: 0;
+  }
+  .skew-blob-b {
+    bottom: 0;
+    right: 0;
+    animation-delay: -1.7s;
+  }
+
+  .skew-card:hover .skew-blob-a,
+  .skew-card:focus-visible .skew-blob-a {
+    top: -2.5rem;
+    left: 3.125rem;
+    width: 5.5rem;
+    height: 5.5rem;
+    opacity: 1;
+  }
+  .skew-card:hover .skew-blob-b,
+  .skew-card:focus-visible .skew-blob-b {
+    bottom: -2.5rem;
+    right: 3.125rem;
+    width: 5.5rem;
+    height: 5.5rem;
+    opacity: 1;
+  }
+
+  @keyframes skew-blob {
+    0%,
+    100% {
+      transform: translateY(8px);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  /* --- content ----------------------------------------------------- */
+  .skew-content {
+    position: relative;
+    z-index: 20;
+    left: 0;
+    display: flex;
+    flex: 1; /* every content panel matches its neighbours in the grid row */
+    flex-direction: column;
+    min-height: 22rem;
+    padding: 1.75rem 1.875rem 2rem;
+    border-radius: 14px;
+    background: var(--color-paper-lift);
+    border: 1px solid rgb(253 238 202 / 0.9);
+    box-shadow:
+      0 1px 2px rgb(90 52 20 / 0.05),
+      0 14px 32px -16px rgb(90 52 20 / 0.28);
+    transition:
+      left 0.55s var(--ease-expo),
+      transform 0.55s var(--ease-expo),
+      box-shadow 0.5s var(--ease-soft);
+  }
+
+  .skew-card:hover .skew-content,
+  .skew-card:focus-within .skew-content {
+    left: -1.25rem;
+    transform: translateY(-0.375rem);
+    box-shadow:
+      0 2px 4px rgb(90 52 20 / 0.06),
+      0 26px 52px -20px rgb(161 8 10 / 0.34);
+  }
+
+  .skew-icon {
+    display: flex;
+    width: 3rem;
+    height: 3rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    color: var(--color-crimson);
+    background: color-mix(in oklab, var(--color-crimson) 8%, transparent);
+    transition:
+      color 0.35s ease,
+      background-color 0.35s ease;
+  }
+  .skew-card:hover .skew-icon {
+    color: var(--color-paper-lift);
+    background: var(--sunrise-ink);
+  }
+
+  .skew-body {
+    flex: 1;
+  }
+
+  .skew-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-crimson);
+  }
+  .skew-cta :global(svg) {
+    transition: transform 0.4s var(--ease-expo);
+  }
+  .skew-card:hover .skew-cta :global(svg) {
+    transform: translateX(0.25rem);
+  }
+
+  .skew-card:focus-visible {
+    outline: 3px solid var(--color-crimson);
+    outline-offset: 6px;
+    border-radius: 16px;
+  }
+
+  /* On a narrow screen the skew reads as a mistake rather than an effect, and
+     the offset panels waste horizontal space. Flatten it to a plain card. */
+  @media (max-width: 767px) {
+    .skew-card {
+      min-height: 0;
+      padding-top: 1.25rem;
+    }
+    .skew-panel {
+      left: 4%;
+      width: 92%;
+      transform: skewX(0deg);
+    }
+    .skew-panel-glow {
+      opacity: 0.4;
+    }
+    .skew-content,
+    .skew-card:hover .skew-content {
+      left: 0;
+      min-height: 0;
+      transform: none;
+      padding: 1.5rem;
+    }
+    .skew-blob {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skew-blob {
+      animation: none;
+    }
+    .skew-card,
+    .skew-panel,
+    .skew-content,
+    .skew-blob {
+      transition: none !important;
+    }
+  }
+</style>

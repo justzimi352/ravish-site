@@ -1,0 +1,219 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import Field from '@/components/Field.astro';
+import Icon from '@/components/Icon.astro';
+import { site } from '@/data/site';
+import { cabinetCities } from '@/data/chapters';
+
+const roles = [
+  'Registration desk',
+  'Vitals & screening support',
+  'Pharmacy',
+  'Crowd & queue management',
+  'Logistics and setup',
+  'Translation (Urdu / Punjabi / Pashto / Sindhi)',
+  'Photography & documentation',
+  'Data entry and reporting',
+  'Clinical (medical or dental student)',
+  'Clinical (qualified doctor or dentist)',
+];
+---
+
+<BaseLayout
+  title="Volunteer"
+  description="Sign up to volunteer with RAVISH — at a free medical camp, the RAVISH Clinic, an awareness drive or a welfare visit. Open to everyone, not only medical students."
+>
+  <PageHero
+    eyebrow="Open to everyone"
+    title="Volunteer with RAVISH"
+    lead="Most of what a camp needs is not clinical. If you can keep a queue calm, count out a prescription accurately, or explain in Urdu what a doctor just said, you are already useful."
+  />
+
+  <section class="band-paper band" aria-labelledby="form-title">
+    <div class="shell">
+      <div class="grid gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
+        <!-- the form -->
+        <div>
+          <SectionHead id="form-title" eyebrow="Sign up" title="Tell us how to reach you" />
+
+          <form
+            name="volunteer"
+            method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            action="/get-involved/thanks/"
+            class="mt-10 flex flex-col gap-6"
+          >
+            <input type="hidden" name="form-name" value="volunteer" />
+            <p class="hidden">
+              <label>Leave this empty <input name="bot-field" /></label>
+            </p>
+
+            <div class="grid gap-6 sm:grid-cols-2">
+              <Field label="Full name" name="name" required autocomplete="name" placeholder="Your name" />
+              <Field
+                label="Email"
+                name="email"
+                type="email"
+                required
+                autocomplete="email"
+                placeholder="you@example.com"
+              />
+            </div>
+
+            <div class="grid gap-6 sm:grid-cols-2">
+              <Field
+                label="Phone or WhatsApp"
+                name="phone"
+                type="tel"
+                required
+                autocomplete="tel"
+                placeholder="+92 3XX XXXXXXX"
+                hint="This is how camp coordinators actually reach volunteers."
+              />
+              <Field
+                label="City"
+                name="city"
+                type="select"
+                required
+                options={[...cabinetCities, 'Somewhere else in Pakistan', 'Outside Pakistan']}
+              />
+            </div>
+
+            <div class="grid gap-6 sm:grid-cols-2">
+              <Field
+                label="Are you a student?"
+                name="status"
+                type="select"
+                required
+                options={[
+                  'MBBS student',
+                  'BDS student',
+                  'Other health sciences student',
+                  'Non-medical student',
+                  'Qualified doctor or dentist',
+                  'Not a student',
+                ]}
+              />
+              <Field
+                label="College or institution"
+                name="institution"
+                placeholder="If you have one"
+              />
+            </div>
+
+            <fieldset>
+              <legend class="field-label">What would you like to help with?</legend>
+              <div class="mt-2 grid gap-2.5 sm:grid-cols-2">
+                {
+                  roles.map((role) => (
+                    <label class="flex cursor-pointer items-start gap-2.5 text-small text-ash">
+                      <input
+                        type="checkbox"
+                        name="roles"
+                        value={role}
+                        class="mt-1 h-4 w-4 shrink-0 cursor-pointer accent-crimson"
+                      />
+                      <span>{role}</span>
+                    </label>
+                  ))
+                }
+              </div>
+            </fieldset>
+
+            <Field
+              label="Anything else we should know"
+              name="notes"
+              type="textarea"
+              rows={4}
+              placeholder="Availability, languages you speak, relevant experience, or a question."
+            />
+
+            <label class="flex cursor-pointer items-start gap-3 text-small text-ash">
+              <input
+                type="checkbox"
+                name="consent"
+                value="yes"
+                required
+                class="mt-1 h-4 w-4 shrink-0 cursor-pointer accent-crimson"
+              />
+              <span>
+                I am happy for RAVISH to contact me about volunteering. <span class="text-ember">*</span>
+              </span>
+            </label>
+
+            <div class="flex flex-wrap items-center gap-4 pt-2">
+              <button type="submit" class="btn btn-primary px-7 py-4 text-body">
+                Sign up to volunteer
+                <Icon name="arrowRight" size={17} />
+              </button>
+              <p class="text-caption text-muted">
+                Or write to
+                <a href={`mailto:${site.email}`} class="link-underline font-semibold">{site.email}</a>
+              </p>
+            </div>
+          </form>
+        </div>
+
+        <!-- context -->
+        <aside class="flex flex-col gap-5">
+          <div class="card p-7">
+            <span class="card-edge" aria-hidden="true"></span>
+            <p class="eyebrow text-crimson">What happens next</p>
+            <ol class="mt-5 flex flex-col gap-4">
+              {
+                [
+                  'Your details go to the volunteer coordinator for your city.',
+                  'When a camp or drive is being planned nearby, you get a message with the date, the location and what is needed.',
+                  'You are trained before your first camp — screening, triage, patient interaction and ethics.',
+                  'You turn up. It is a long day. Most people come back.',
+                ].map((step, i) => (
+                  <li class="flex gap-3.5 text-small leading-relaxed text-ash">
+                    <span
+                      class="font-display text-[1.5rem] leading-none font-semibold text-crimson"
+                      style="font-variant-numeric:oldstyle-nums"
+                      aria-hidden="true"
+                    >
+                      {i + 1}
+                    </span>
+                    <span>{step}</span>
+                  </li>
+                ))
+              }
+            </ol>
+          </div>
+
+          <div class="card p-7">
+            <span class="card-edge" aria-hidden="true"></span>
+            <p class="eyebrow text-crimson">A note on the old form</p>
+            <p class="mt-4 text-small leading-relaxed text-ash">
+              RAVISH previously collected volunteers through a Google Form shared on Instagram. This page
+              replaces it — the submissions land in the same place, and the link no longer expires or gets
+              buried in a story.
+            </p>
+          </div>
+
+          <div class="card p-7">
+            <span class="card-edge" aria-hidden="true"></span>
+            <p class="eyebrow text-crimson">Not a student?</p>
+            <p class="mt-4 text-small leading-relaxed text-ash">
+              Good. Camps need drivers, translators, people who can run a desk, and people who can carry
+              boxes. Cabinets are for medical and dental students; volunteering is not.
+            </p>
+          </div>
+
+          <div class="card p-7">
+            <span class="card-edge" aria-hidden="true"></span>
+            <p class="eyebrow text-crimson">Privacy</p>
+            <p class="mt-4 text-small leading-relaxed text-ash">
+              Your details are used to contact you about volunteering and nothing else. They are not sold,
+              shared or published. Ask us to delete them at any time and we will.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

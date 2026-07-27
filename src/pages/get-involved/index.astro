@@ -1,0 +1,107 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import DonateBand from '@/components/DonateBand.astro';
+import SkewCard from '@/components/SkewCard.astro';
+import type { IconName } from '@/components/icons';
+
+const doors: { icon: IconName; title: string; who: string; body: string; href: string; cta: string }[] = [
+  {
+    icon: 'heart',
+    title: 'Volunteer',
+    who: 'Open to everyone',
+    body: 'Registration, crowd management, pharmacy, logistics, photography, translation, data entry. A camp needs far more hands than it needs doctors, and most of those hands do not need a medical degree.',
+    href: '/get-involved/volunteer',
+    cta: 'Sign up to volunteer',
+  },
+  {
+    icon: 'users',
+    title: 'Join a cabinet',
+    who: 'MBBS and BDS students',
+    body: 'Run RAVISH at your own college. A local cabinet has a president, a vice president, a general secretary and seven departments, and it plans its own camps. Terms run July to June.',
+    href: '/get-involved/cabinets',
+    cta: 'See the roles',
+  },
+  {
+    icon: 'sparkle',
+    title: 'Become an ambassador',
+    who: 'Students at colleges without a cabinet',
+    body: 'Be the first RAVISH presence on your campus. Ambassadors run awareness activity locally, recruit volunteers, and often go on to found the cabinet.',
+    href: '/get-involved/ambassadors',
+    cta: 'Apply',
+  },
+  {
+    icon: 'building',
+    title: 'Partner with us',
+    who: 'NGOs, hospitals, brands',
+    body: 'Doctors, medicines, premises, or a community that already trusts you. Forty-five partnerships so far, from a Swiss fair-trade organisation to a pizza chain.',
+    href: '/get-involved/partner',
+    cta: 'Start a conversation',
+  },
+];
+---
+
+<BaseLayout
+  title="Get involved"
+  description="Volunteer at a camp, join a local cabinet at your medical college, become a campus ambassador, or partner with RAVISH as an organisation."
+>
+  <PageHero
+    eyebrow="Four ways in"
+    title="You do not need a medical degree to be useful here"
+    lead="Two of these four are open to anyone. The camps run on registration desks, pharmacy queues, logistics and translation as much as on consultations."
+  />
+
+  <section class="band-paper band" aria-labelledby="doors-title">
+    <div class="shell">
+      <SectionHead id="doors-title" eyebrow="Pick a door" title="Where do you fit" />
+
+      <div class="mt-14 grid gap-6 md:grid-cols-2 lg:gap-10">
+        {
+          doors.map((door, i) => (
+            <SkewCard
+              title={door.title}
+              eyebrow={door.who}
+              body={door.body}
+              href={door.href}
+              cta={door.cta}
+              icon={door.icon}
+              tone={(i % 4) as 0 | 1 | 2 | 3}
+              index={i}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="band-paper-deep band" aria-labelledby="expect-title">
+    <div class="shell-narrow">
+      <SectionHead
+        id="expect-title"
+        eyebrow="Being honest about it"
+        title="What to expect if you volunteer"
+      />
+
+      <div class="mt-10 flex flex-col gap-5">
+        <p class="text-body leading-relaxed text-ash">
+          A camp is a long day. It usually starts early, runs to the late afternoon, and involves standing
+          up for most of it. The room is often hot, the queue is often longer than planned for, and the
+          last hour is the one where mistakes happen.
+        </p>
+        <p class="text-body leading-relaxed text-ash">
+          You will be trained before you are useful — basic screening and triage, how to speak to a
+          patient, and the ethics of both. That training is a stated part of the programme, not an
+          afterthought.
+        </p>
+        <p class="text-body leading-relaxed text-ash">
+          There is no payment. There is a certificate, real clinical exposure years before you would
+          otherwise get it, and the specific thing every volunteer in the archive says some version of:
+          that they learned more in one day of service than in a week of lectures.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <DonateBand compact />
+</BaseLayout>

@@ -1,0 +1,65 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import ProgrammeCard from '@/components/ProgrammeCard.astro';
+import DonateBand from '@/components/DonateBand.astro';
+import Disclosure from '@/components/Disclosure.astro';
+import { programmes } from '@/data/programmes';
+import { programmeBreakdown } from '@/data/stats';
+---
+
+<BaseLayout
+  title="What we do"
+  description="Eight programmes: free medical camps, the RAVISH Clinic, awareness and screening, education and webinars, welfare drives, disaster relief, Color for a Cause and the Ambassador Program."
+>
+  <PageHero
+    eyebrow="Eight programmes"
+    title="Screening finds it. The camp treats it. The clinic follows up."
+    lead="Everything RAVISH runs sits on that spine. Education, welfare and relief exist because the same communities need those things too, and because a group of medical students is well placed to provide them."
+  />
+
+  <section class="band-paper band" aria-labelledby="all-programmes-title">
+    <div class="shell">
+      <SectionHead
+        id="all-programmes-title"
+        eyebrow="The programmes"
+        title="What each one actually involves"
+      />
+
+      <div class="mt-14">
+        <Disclosure
+          peek="40rem"
+          moreLabel="Show all eight, in detail"
+          lessLabel="Show fewer"
+          count="4 more"
+          veil="paper"
+        >
+          <div class="grid gap-6 md:grid-cols-2">
+            {programmes.map((p, i) => <ProgrammeCard programme={p} index={i} showDetail />)}
+          </div>
+        </Disclosure>
+      </div>
+    </div>
+  </section>
+
+  <section class="band-paper-deep band-tight" aria-labelledby="breakdown-title">
+    <div class="shell">
+      <h2 id="breakdown-title" class="eyebrow text-crimson" data-reveal="rise">The 2025 breakdown</h2>
+      <div class="mt-9 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          programmeBreakdown.map((item, i) => (
+            <div data-reveal="rise" style={`--reveal-delay:${i * 80}`}>
+              <p class="numeral">{item.count}</p>
+              <p class="mt-2.5 text-small font-semibold text-ash">{item.label}</p>
+              <p class="mt-1 text-caption text-muted">{item.note}</p>
+            </div>
+          ))
+        }
+      </div>
+      <p class="mt-9 text-caption text-muted" data-reveal="fade">Source: RAVISH IMPACT 2025.</p>
+    </div>
+  </section>
+
+  <DonateBand compact />
+</BaseLayout>

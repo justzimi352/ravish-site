@@ -1,0 +1,77 @@
+---
+interface Props {
+  label: string;
+  name: string;
+  type?: 'text' | 'email' | 'tel' | 'textarea' | 'select';
+  required?: boolean;
+  placeholder?: string;
+  options?: string[];
+  hint?: string;
+  rows?: number;
+  autocomplete?: string;
+  class?: string;
+}
+
+const {
+  label,
+  name,
+  type = 'text',
+  required = false,
+  placeholder,
+  options = [],
+  hint,
+  rows = 5,
+  autocomplete,
+  class: className = '',
+} = Astro.props;
+
+const id = `f-${name}`;
+const hintId = hint ? `${id}-hint` : undefined;
+---
+
+<div class={className}>
+  <label class="field-label" for={id}>
+    {label}
+    {
+      required ? (
+        <span class="text-ember" aria-hidden="true"> *</span>
+      ) : (
+        <span class="font-normal text-muted normal-case"> (optional)</span>
+      )
+    }
+  </label>
+
+  {
+    type === 'textarea' ? (
+      <textarea
+        id={id}
+        name={name}
+        rows={rows}
+        required={required}
+        placeholder={placeholder}
+        aria-describedby={hintId}
+        class="field resize-y"
+      />
+    ) : type === 'select' ? (
+      <select id={id} name={name} required={required} aria-describedby={hintId} class="field cursor-pointer">
+        <option value="">Choose one…</option>
+        {options.map((option) => (
+          <option value={option}>{option}</option>
+        ))}
+      </select>
+    ) : (
+      <input
+        id={id}
+        name={name}
+        type={type}
+        required={required}
+        placeholder={placeholder}
+        autocomplete={autocomplete}
+        aria-describedby={hintId}
+        class="field"
+      />
+    )
+  }
+
+  {hint && <p id={hintId} class="mt-1.5 text-caption text-muted">{hint}</p>}
+</div>

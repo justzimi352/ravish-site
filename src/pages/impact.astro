@@ -1,0 +1,268 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import Counter from '@/components/Counter.astro';
+import Disclosure from '@/components/Disclosure.astro';
+import DonateBand from '@/components/DonateBand.astro';
+import Button from '@/components/Button.astro';
+import Icon from '@/components/Icon.astro';
+import { allStats, growth, reports, source, programmeBreakdown } from '@/data/stats';
+
+const maxMultiple = Math.max(...growth.map((g) => g.multiple));
+
+/**
+ * Two sizes per slide: a 700px thumbnail for the grid, and the full 1440px
+ * behind the link. The grid shows them at ~300px, so serving the full slide
+ * there would download roughly ten times what is needed — which matters on a
+ * Pakistani mobile connection.
+ */
+const slides = (report: (typeof reports)[number]) =>
+  Array.from({ length: report.slides }, (_, i) => {
+    const n = String(i + 1).padStart(2, '0');
+    return { thumb: `${report.dir}/slide-${n}.webp`, full: `${report.dir}/slide-${n}-full.webp` };
+  });
+---
+
+<BaseLayout
+  title="Impact"
+  description="15,000+ patients, 55+ medical camps, PKR 3 million raised, 40+ local cabinets. Every figure from RAVISH's own IMPACT 2024 and IMPACT 2025 annual reports, reproduced in full."
+>
+  <PageHero
+    eyebrow={`Source: ${source.label}, published ${source.published}`}
+    title="Everything we can count"
+    lead="Every number on this page comes from RAVISH's own published annual reports, and both reports are reproduced here in full so you can check them. Cumulative since March 2024."
+  />
+
+  <!-- the full published table -->
+  <section class="band-silk band relative" aria-labelledby="all-stats-title">
+    <span class="silk-weave" aria-hidden="true"></span>
+    <div class="shell relative">
+      <SectionHead
+        id="all-stats-title"
+        eyebrow="Cumulative since March 2024"
+        title="The published figures"
+        tone="cream"
+      />
+
+      <div class="mt-14 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          allStats.map((stat, i) => (
+            <Counter {...stat} tone="gold" delay={Math.min(i, 8) * 70} />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- growth -->
+  <section class="band-paper band" aria-labelledby="growth-title">
+    <div class="shell">
+      <SectionHead
+        id="growth-title"
+        eyebrow="2024 → 2025"
+        title="Two years. Six-fold funding growth."
+        lead="Set IMPACT 2024 against IMPACT 2025 and the direction is more informative than any single total."
+      />
+
+      <div class="mt-12 overflow-x-auto" data-reveal="rise">
+        <table class="figure-table min-w-[46rem]">
+          <caption class="sr-only">RAVISH growth 2024 to 2025</caption>
+          <thead>
+            <tr>
+              <th scope="col">Metric</th>
+              <th scope="col">2024</th>
+              <th scope="col">2025</th>
+              <th scope="col" class="w-[34%]">Growth</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              growth.map((row, i) => (
+                <tr data-reveal="fade" style={`--reveal-delay:${i * 55}`}>
+                  <th scope="row" class="font-medium">{row.metric}</th>
+                  <td class="text-muted">{row.y2024}</td>
+                  <td class="font-semibold text-ash">{row.y2025}</td>
+                  <td>
+                    <span class="flex items-center gap-3">
+                      <span class="growth-bar w-full max-w-[11rem]">
+                        <span style={`width:${(row.multiple / maxMultiple) * 100}%`} />
+                      </span>
+                      <span class="shrink-0 font-display text-2xl font-semibold text-crimson">
+                        {row.multipleLabel}
+                      </span>
+                    </span>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          programmeBreakdown.map((item, i) => (
+            <div data-reveal="rise" style={`--reveal-delay:${i * 75}`}>
+              <p class="numeral">{item.count}</p>
+              <p class="mt-2.5 text-small font-semibold text-ash">{item.label}</p>
+              <p class="mt-1 text-caption text-muted">{item.note}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- transparency note -->
+  <section class="band-paper-deep band-tight" aria-labelledby="method-title">
+    <div class="shell-narrow">
+      <h2 id="method-title" class="display-h3 text-crimson" data-reveal="rise">
+        How to read these numbers
+      </h2>
+      <div class="mt-6 flex flex-col gap-4" data-reveal="rise">
+        <p class="text-small leading-relaxed text-ash">
+          <strong class="font-semibold">They are RAVISH’s own, not independently audited.</strong>
+          RAVISH is a student-led organisation, not a registered charity, and there is no external auditor
+          signing off on these totals. They come from camp registration counts and cabinet reporting,
+          collated annually.
+        </p>
+        <p class="text-small leading-relaxed text-ash">
+          <strong class="font-semibold">“Patients cared for” counts registrations, not individuals.</strong>
+          Someone who attends two camps is likely counted twice. That is normal for camp reporting and
+          worth knowing.
+        </p>
+        <p class="text-small leading-relaxed text-ash">
+          <strong class="font-semibold">The two city figures mean different things.</strong> A cabinet is
+          based in 15 cities. Camps run in more than that — IMPACT 2025 reports 25+ major cities covered,
+          and its own “Our Presence” map names 26. Both are true; they count different things.
+        </p>
+        <p class="text-small leading-relaxed text-ash">
+          Improving data and reporting systems is one of five priorities RAVISH names for the year ahead
+          in IMPACT 2025, which is the right instinct.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- the reports themselves -->
+  <section class="band-paper band" id="reports" style="scroll-margin-top:6rem" aria-labelledby="reports-title">
+    <div class="shell">
+      <SectionHead
+        id="reports-title"
+        eyebrow="Read them yourself"
+        title="The annual reports, in full"
+        lead="Every slide of both annual logs, as RAVISH designed and published them."
+      />
+
+      <div class="mt-14 flex flex-col gap-16">
+        {
+          reports.map((report) => (
+            <div id={`report-${report.year}`} style="scroll-margin-top:6.5rem">
+              <div class="flex flex-wrap items-end justify-between gap-5 border-b-2 border-crimson/20 pb-4">
+                <div>
+                  <h3 class="display-h2 text-crimson">{report.title}</h3>
+                  <p class="mt-2 text-caption text-muted">
+                    Published {report.published} · {report.slides} slides
+                  </p>
+                </div>
+                <a
+                  href={`${report.dir}/slide-01-full.webp`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-quiet shrink-0"
+                >
+                  <Icon name="external" size={16} />
+                  Open full size
+                </a>
+              </div>
+
+              <p class="measure mt-6 text-body text-ash">{report.blurb}</p>
+
+              <div class="mt-8">
+                <Disclosure
+                  peek="26rem"
+                  moreLabel={`Show all ${report.slides} slides`}
+                  lessLabel="Show fewer slides"
+                  count={`${report.title}`}
+                  veil="paper"
+                >
+                  <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                    {
+                      slides(report).map((slide, i) => (
+                        <li>
+                          <a
+                            href={slide.full}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="img-frame group/card card block overflow-hidden rounded-[12px] p-0"
+                            data-reveal="scale"
+                            style={`--reveal-delay:${Math.min(i, 8) * 45}`}
+                          >
+                            <img
+                              src={slide.thumb}
+                              alt={`${report.title}, slide ${i + 1} of ${report.slides}`}
+                              width="700"
+                              height="700"
+                              loading="lazy"
+                              decoding="async"
+                              class="aspect-square w-full object-cover"
+                            />
+                          </a>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </Disclosure>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- what's next -->
+  <section class="band-paper-deep band" aria-labelledby="next-title">
+    <div class="shell-narrow">
+      <SectionHead id="next-title" eyebrow="What comes next" title="Five stated priorities" />
+
+      <ol class="mt-12 flex flex-col gap-4">
+        {
+          [
+            'Expand the clinic network',
+            'Scale occupational health programmes',
+            'Strengthen disaster response',
+            'Improve data and reporting systems',
+            'Empower the next generation of youth leaders',
+          ].map((item, i) => (
+            <li class="card flex items-center gap-5 p-6" data-reveal="rise" style={`--reveal-delay:${i * 70}`}>
+              <span class="card-edge" aria-hidden="true" />
+              <span
+                class="font-display text-[1.75rem] leading-none font-semibold"
+                style="font-variant-numeric:oldstyle-nums;background:var(--sunrise-ink);-webkit-background-clip:text;background-clip:text;color:transparent"
+                aria-hidden="true"
+              >
+                {i + 1}
+              </span>
+              <span class="text-body font-medium text-ash">{item}</span>
+            </li>
+          ))
+        }
+      </ol>
+
+      <p class="mt-9 text-body leading-relaxed text-ash" data-reveal="rise">
+        Guided by ethics, transparency, and collaboration, RAVISH remains committed to building a
+        healthier and more just Pakistan.
+      </p>
+      <p class="mt-2 text-caption text-muted">RAVISH, IMPACT 2025</p>
+
+      <div class="mt-9 flex flex-wrap gap-3" data-reveal="rise">
+        <Button href="/donate" icon="arrowRight">Fund the next year</Button>
+        <Button href="/get-involved" variant="outline">Get involved</Button>
+      </div>
+    </div>
+  </section>
+
+  <DonateBand compact />
+</BaseLayout>

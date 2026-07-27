@@ -1,0 +1,140 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LeafField from '@/components/LeafField.astro';
+import Button from '@/components/Button.astro';
+import Icon from '@/components/Icon.astro';
+import DonateBand from '@/components/DonateBand.astro';
+
+export async function getStaticPaths() {
+  const stories = await getCollection('stories');
+  return stories.map((story) => ({ params: { id: story.id }, props: { story } }));
+}
+
+const { story } = Astro.props;
+const { Content } = await render(story);
+const d = story.data;
+
+const all = (await getCollection('stories')).sort(
+  (a, b) => (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0)
+);
+const related = all.filter((s) => s.id !== story.id).slice(0, 3);
+---
+
+<BaseLayout title={d.title} description={d.excerpt}>
+  <article>
+    <header class="band-paper relative overflow-hidden pt-14 pb-12 md:pt-20 md:pb-14">
+      <LeafField count={8} class="opacity-60" />
+
+      <div class="shell-narrow relative">
+        <nav aria-label="Breadcrumb" class="mb-8">
+          <ol class="flex flex-wrap items-center gap-2 text-caption text-muted">
+            <li><a href="/stories" class="link-underline">Stories</a></li>
+          </ol>
+        </nav>
+
+        <h1 class="display-h1 text-crimson" data-reveal="rise">{d.title}</h1>
+
+        <div class="rule-sunrise mt-7" style="max-width:6rem;--reveal-delay:100" data-reveal="line" aria-hidden="true"></div>
+
+        <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2" data-reveal="rise" style="--reveal-delay:160">
+          <span class="text-body font-semibold text-ash">{d.voice}</span>
+          <span class="text-small text-muted">{d.role}</span>
+          {
+            d.date && (
+              <time datetime={d.date.toISOString().slice(0, 10)} class="text-caption text-muted">
+                {d.date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+              </time>
+            )
+          }
+        </div>
+      </div>
+    </header>
+
+    <div class="band-paper pb-16 md:pb-24">
+      <div class="shell-narrow">
+        <div class="prose-story measure" data-reveal="rise">
+          <Content />
+        </div>
+
+        <hr class="mt-14 border-line" />
+
+        <div class="mt-10 flex flex-wrap gap-3">
+          <Button href="/get-involved/volunteer" icon="arrowRight">Volunteer</Button>
+          <Button href="/stories" variant="outline">More stories</Button>
+        </div>
+      </div>
+    </div>
+
+    {
+      related.length > 0 && (
+        <section class="band-paper-deep band" aria-labelledby="related-stories-title">
+          <div class="shell">
+            <h2 id="related-stories-title" class="display-h2 text-crimson" data-reveal="rise">
+              More voices
+            </h2>
+            <div class="mt-10 grid gap-6 md:grid-cols-3">
+              {related.map((item, i) => (
+                <a
+                  href={`/stories/${item.id}`}
+                  class="card group/card flex flex-col p-7"
+                  data-reveal="rise"
+                  style={`--reveal-delay:${i * 80}`}
+                >
+                  <span class="card-edge" aria-hidden="true" />
+                  <p class="display-h3 text-crimson">{item.data.excerpt}</p>
+                  <div class="mt-auto flex flex-col gap-1 border-t border-line pt-5">
+                    <span class="text-small font-semibold text-ash">{item.data.voice}</span>
+                    <span class="text-caption text-muted">{item.data.role}</span>
+                  </div>
+                  <span class="mt-5 inline-flex items-center gap-2 text-small font-semibold text-crimson">
+                    Read it
+                    <Icon name="arrowRight" size={15} class="transition-transform duration-400 group-hover/card:translate-x-1" />
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+  </article>
+
+  <DonateBand compact />
+</BaseLayout>
+
+<style is:global>
+  .prose-story p {
+    font-size: var(--text-lead);
+    line-height: 1.66;
+    color: var(--color-ash);
+    margin-bottom: 1.625rem;
+  }
+  .prose-story p:first-child {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 1.875rem);
+    line-height: 1.36;
+    font-weight: 500;
+    color: var(--color-crimson);
+  }
+  .prose-story p:last-child {
+    margin-bottom: 0;
+  }
+  .prose-story em {
+    font-style: italic;
+  }
+  .prose-story strong {
+    font-weight: 600;
+  }
+  .prose-story a {
+    color: var(--color-crimson);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .prose-story [lang='ur'] {
+    font-size: 1.5rem;
+    color: var(--color-crimson);
+    margin: 2rem 0 0.5rem;
+    line-height: 2.2;
+  }
+</style>

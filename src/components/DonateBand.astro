@@ -1,0 +1,41 @@
+---
+import Button from './Button.astro';
+import { statusDisclosure } from '@/data/site';
+
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+
+<section class={`band-silk ${compact ? 'band-tight' : 'band'} relative`} aria-labelledby="donate-band-title">
+  <span class="silk-weave" aria-hidden="true"></span>
+
+  <div class="shell">
+    <div class="grid items-end gap-10 lg:grid-cols-[1.5fr_1fr]">
+      <div>
+        <p class="eyebrow text-gold-light" data-reveal="rise">Support the work</p>
+        <h2 id="donate-band-title" class="display-h1 mt-4 text-paper" data-reveal="rise" style="--reveal-delay:70">
+          Donate today.<br />Help us heal tomorrow.
+        </h2>
+        <p class="lead mt-6 measure text-paper/92" data-reveal="rise" style="--reveal-delay:140">
+          Millions in Pakistan still lack access to quality healthcare. Your support helps RAVISH deliver
+          free services to communities nationwide.
+        </p>
+        <p class="mt-5 max-w-[60ch] text-small text-paper/92" data-reveal="rise" style="--reveal-delay:190">
+          {statusDisclosure.short} Funds are tracked on an activity-wise basis, and we will tell you exactly
+          how your contribution was used if you ask.
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-3 lg:items-end" data-reveal="rise" style="--reveal-delay:240">
+        <Button href="/donate" variant="on-silk" size="lg" icon="arrowRight" class="w-full lg:w-auto">
+          Donate
+        </Button>
+        <Button href="/get-involved/volunteer" variant="quiet" class="w-full lg:w-auto">
+          Volunteer instead
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>

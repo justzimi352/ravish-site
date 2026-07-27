@@ -1,0 +1,144 @@
+---
+import '@/styles/global.css';
+import Nav from '@/components/Nav.astro';
+import Footer from '@/components/Footer.astro';
+import Preloader from '@/components/Preloader.astro';
+import { site } from '@/data/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Appended as "… — RAVISH". Pass bare={true} for the homepage. */
+  bare?: boolean;
+  ogImage?: string;
+}
+
+const { title, description = site.description, bare = false, ogImage = '/og-default.png' } = Astro.props;
+
+const fullTitle = bare ? title : `${title} — ${site.publicName}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://ravishngo.org').href;
+
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: site.publicName,
+  alternateName: ['RAVISH', 'روش'],
+  url: 'https://ravishngo.org',
+  email: site.email,
+  telephone: site.phone,
+  foundingDate: '2024-03-07',
+  slogan: site.taglineEnglish,
+  description: site.description,
+  sameAs: [site.instagram, site.linkedin],
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Lahore',
+    addressRegion: 'Punjab',
+    addressCountry: 'PK',
+  },
+};
+---
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site ?? 'https://ravishngo.org').href} />
+    <meta property="og:site_name" content={site.publicName} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#FDEECA" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <script is:inline>
+      // Flip off the no-JS guard before first paint so reveals can arm.
+      document.documentElement.classList.remove('no-js');
+
+      // Safety net: if the reveal module never runs — blocked, failed to parse,
+      // slow network — nothing on this site should stay invisible. Content
+      // legibility does not get to depend on an animation script loading.
+      window.addEventListener('load', function () {
+        setTimeout(function () {
+          document.querySelectorAll('[data-reveal]:not(.is-in)').forEach(function (el) {
+            el.classList.add('is-in');
+          });
+        }, 1200);
+      });
+    </script>
+
+    <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
+    <slot name="head" />
+  </head>
+
+  <body>
+    <Preloader />
+    <a href="#main" class="skip-link">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // ---- reveal on scroll -------------------------------------------
+      // Fade-and-rise, 12–26px, once per element. Nothing re-animates.
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const targets = document.querySelectorAll<HTMLElement>('[data-reveal]');
+
+      if (reduce || !('IntersectionObserver' in window)) {
+        targets.forEach((el) => el.classList.add('is-in'));
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('is-in');
+              io.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.06 }
+        );
+
+        targets.forEach((el) => {
+          // anything above the fold shows immediately — no flash, no wait
+          if (el.getBoundingClientRect().top < window.innerHeight * 0.92) {
+            el.classList.add('is-in');
+          } else {
+            io.observe(el);
+          }
+        });
+      }
+
+      // ---- copy-to-clipboard (IBAN, account number) -------------------
+      document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const value = btn.dataset.copy ?? '';
+          try {
+            await navigator.clipboard.writeText(value);
+            const live = btn.querySelector<HTMLElement>('[data-copy-state]');
+            if (live) {
+              const previous = live.textContent;
+              live.textContent = 'Copied';
+              setTimeout(() => {
+                live.textContent = previous;
+              }, 1800);
+            }
+          } catch {
+            /* clipboard blocked — the value is selectable text anyway */
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

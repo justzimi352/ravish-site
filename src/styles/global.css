@@ -1,0 +1,1232 @@
+/* ------------------------------------------------------------------
+   RAVISH — design system
+   Palette sampled directly from the logo and the IMPACT decks:
+     logo paper  #FDEECA   logo sphere  #F66A02 → #F87D05
+     wordmark    #A1080A   silk ramp    #611925 #991115 #BC1A25
+                                        #DA1F30 #D9561E #FB723C #FDCC4C
+   ------------------------------------------------------------------ */
+
+@import '@fontsource-variable/inter/wght.css';
+@import '@fontsource-variable/cormorant-garamond/wght.css';
+@import '@fontsource/noto-nastaliq-urdu/arabic-400.css';
+@import '@fontsource/noto-nastaliq-urdu/arabic-500.css';
+
+@import 'tailwindcss';
+
+@theme {
+  /* --- grounds ------------------------------------------------- */
+  --color-paper: #fdeeca; /* logo-exact. The logo knockout only works here. */
+  --color-paper-lift: #fff8ec; /* cards, translucent overlays */
+  --color-paper-deep: #f9e6bb; /* alternating band, inset wells */
+
+  /* --- ink ----------------------------------------------------- */
+  --color-crimson: #a1080a; /* PRIMARY INK — 7.2:1 on paper */
+  --color-crimson-deep: #7c0608;
+  --color-ash: #2a211c; /* body — 13.8:1 */
+  --color-muted: #6e5c50; /* captions — 5.6:1 */
+  --color-deep: #1a1210; /* footer ground */
+
+  /* --- energy (see the contrast rule below) -------------------- */
+  --color-ember: #e8481f; /* 3.4:1 — large text / grounds only */
+  --color-ember-mid: #c42410; /* gradient stop that keeps buttons ≥5:1 */
+  --color-flame: #f26b1f; /* decorative */
+  --color-sphere: #f6740a; /* logo sphere orange */
+  --color-saffron: #f2a03d; /* 1.9:1 — NEVER text on paper */
+  --color-gold: #fdcc4c; /* display numerals on dark grounds only */
+  --color-gold-light: #ffdfa0; /* 5.2:1+ on silk — small text on dark grounds */
+
+  /* --- structure ----------------------------------------------- */
+  --color-line: #e6d6b4;
+  --color-line-soft: #efe0c2;
+
+  /* --- type ---------------------------------------------------- */
+  --font-display: 'Cormorant Garamond Variable', 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Inter Variable', Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-urdu: 'Noto Nastaliq Urdu', serif;
+
+  /* 1.25 major third, 18px base. Cormorant never below 24px. */
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.55;
+  --text-small: 0.9375rem;
+  --text-small--line-height: 1.6;
+  --text-body: 1.125rem;
+  --text-body--line-height: 1.67;
+  --text-lead: 1.3125rem;
+  --text-lead--line-height: 1.62;
+  --text-h4: 1.25rem;
+  --text-h4--line-height: 1.4;
+  --text-h3: 1.625rem;
+  --text-h3--line-height: 1.23;
+  --text-h2: 2.25rem;
+  --text-h2--line-height: 1.17;
+  --text-h1: 3rem;
+  --text-h1--line-height: 1.125;
+  --text-display: 4rem;
+  --text-display--line-height: 1.06;
+
+  /* --- motion --------------------------------------------------- */
+  --ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* --- depth ---------------------------------------------------- */
+  --shadow-card: 0 1px 2px rgb(90 52 20 / 0.05), 0 8px 24px -12px rgb(90 52 20 / 0.14);
+  --shadow-lift: 0 2px 4px rgb(90 52 20 / 0.06), 0 18px 44px -18px rgb(90 52 20 / 0.22);
+  --shadow-glow: 0 10px 34px -12px rgb(161 8 10 / 0.42);
+
+  --radius-card: 14px;
+}
+
+/* ==================================================================
+   BASE
+   ================================================================== */
+
+@layer base {
+  :root {
+    --sunrise: linear-gradient(135deg, #a1080a 0%, #e8481f 45%, #f2a03d 100%);
+    /* Stops short of saffron so gradient text keeps ≥3:1 on paper. */
+    --sunrise-ink: linear-gradient(103deg, #7c0608 0%, #a1080a 34%, #e8481f 100%);
+    --gutter: clamp(1.25rem, 5vw, 3.5rem);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ash);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.67;
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    letter-spacing: -0.005em;
+  }
+
+  /* Cormorant is only safe at 24px and up — below that it turns to mush, which
+     is the single easiest way to ruin this design. h1–h3 default to the display
+     face, so any heading deliberately dropped to a body or UI size must switch
+     to the sans face. Enforced here rather than trusted to each page. */
+  h1.text-body,
+  h1.text-small,
+  h1.text-caption,
+  h2.text-body,
+  h2.text-small,
+  h2.text-caption,
+  h3.text-body,
+  h3.text-small,
+  h3.text-caption {
+    font-family: var(--font-sans);
+    letter-spacing: -0.005em;
+    line-height: 1.4;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-ember) 26%, transparent);
+    color: var(--color-crimson-deep);
+  }
+
+  /* Focus — 3px ring, always visible, never removed. */
+  :focus-visible {
+    outline: 3px solid var(--color-crimson);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  /* Nastaliq needs the room. Never fake-bold it. */
+  [lang='ur'] {
+    font-family: var(--font-urdu);
+    direction: rtl;
+    line-height: 2.15;
+    font-weight: 400;
+    font-synthesis: none;
+    letter-spacing: normal;
+    /* This is an LTR page carrying Urdu lines, so they align to the left edge
+       with the English around them. `direction` still orders the glyphs. */
+    text-align: left;
+  }
+
+  /* A real multi-line Urdu passage should align right, as Urdu does. */
+  [lang='ur'].urdu-block {
+    text-align: right;
+  }
+
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  hr {
+    border: 0;
+    height: 1px;
+    background: var(--color-line);
+  }
+
+  /* Skip link */
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 100;
+    background: var(--color-crimson);
+    color: var(--color-paper);
+    padding: 0.75rem 1.25rem;
+    border-radius: 0 0 10px 10px;
+    font-size: var(--text-small);
+    font-weight: 600;
+    transition: top 0.2s var(--ease-soft);
+  }
+  .skip-link:focus {
+    top: 0;
+  }
+}
+
+/* ==================================================================
+   TYPE UTILITIES
+   ================================================================== */
+
+@utility display-xl {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.75rem, 7.4vw, 4.75rem);
+  line-height: 1.03;
+  letter-spacing: -0.018em;
+}
+
+@utility display-h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.375rem, 5.2vw, 3.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.014em;
+}
+
+@utility display-h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.875rem, 3.6vw, 2.375rem);
+  line-height: 1.14;
+  letter-spacing: -0.012em;
+}
+
+@utility display-h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  /* 26px floor — Cormorant turns to mush below 24px. */
+  font-size: clamp(1.625rem, 2.3vw, 1.875rem);
+  line-height: 1.22;
+  letter-spacing: -0.008em;
+}
+
+@utility display-quote {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.5rem, 3.2vw, 2.125rem);
+  line-height: 1.36;
+  letter-spacing: -0.008em;
+}
+
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+@utility lead {
+  font-size: clamp(1.1875rem, 1.7vw, 1.3125rem);
+  line-height: 1.62;
+  color: var(--color-ash);
+}
+
+@utility measure {
+  max-width: 68ch;
+}
+@utility measure-tight {
+  max-width: 56ch;
+}
+
+/* Gradient numerals. Ramp stops at ember so it clears 3:1 at display size. */
+@utility numeral {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-variant-numeric: oldstyle-nums;
+  font-size: clamp(2.75rem, 6vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  background: var(--sunrise-ink);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility numeral-gold {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-variant-numeric: oldstyle-nums;
+  font-size: clamp(2.75rem, 6vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  /* On crimson: gold reads 5.5:1. This is the one place gold becomes text. */
+  color: var(--color-gold);
+}
+
+@utility urdu-tagline {
+  font-family: var(--font-urdu);
+  direction: rtl;
+  font-weight: 400;
+  font-synthesis: none;
+  font-size: clamp(1.375rem, 3.2vw, 2rem);
+  line-height: 2.2;
+  padding-block: 0.15em;
+}
+
+/* ==================================================================
+   LAYOUT
+   ================================================================== */
+
+@utility shell {
+  width: 100%;
+  max-width: 78rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+@utility shell-narrow {
+  width: 100%;
+  max-width: 58rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+@utility band {
+  padding-block: clamp(4rem, 9vw, 7.5rem);
+}
+
+/* Heroes fill the first screen and centre their content, so a visitor never
+   has to scroll to see the whole opening statement. `svh` rather than `vh` so
+   mobile browser chrome doesn't push the bottom out of view.
+   min-height alone is not enough — on a short laptop screen the content is
+   taller than the viewport, so the type and rhythm below are sized against
+   viewport HEIGHT as well as width. */
+@utility band-hero {
+  display: flex;
+  align-items: center;
+  min-height: calc(100svh - 5.4rem);
+  padding-block: clamp(1.25rem, 3.5vh, 3.5rem);
+}
+
+/* Below this the padding is the first thing to give, so the densest hero
+   (the homepage, which carries a badge row, a tagline, two CTAs and a meta
+   line) still lands inside the first screen. */
+@media (max-height: 800px) {
+  .band-hero {
+    padding-block: 0.625rem;
+  }
+}
+
+/* vertical rhythm that collapses on short screens */
+@utility mt-hero-xs {
+  margin-top: clamp(0.5rem, 1.6vh, 0.875rem);
+}
+@utility mt-hero-sm {
+  margin-top: clamp(0.75rem, 2.2vh, 1.5rem);
+}
+@utility mt-hero {
+  margin-top: clamp(1rem, 3vh, 2rem);
+}
+@utility mt-hero-lg {
+  margin-top: clamp(1.125rem, 3.6vh, 2.5rem);
+}
+
+@utility hero-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: min(clamp(2.375rem, 6.6vw, 4.5rem), 9vh);
+  line-height: 1.04;
+  letter-spacing: -0.018em;
+}
+
+@utility hero-lead {
+  font-size: min(clamp(1.0625rem, 1.6vw, 1.3125rem), 2.7vh);
+  line-height: 1.6;
+  color: var(--color-ash);
+}
+
+@utility hero-badge {
+  width: clamp(3.25rem, 9vh, 5.5rem);
+  height: auto;
+}
+
+@utility band-tight {
+  padding-block: clamp(2.75rem, 6vw, 4.5rem);
+}
+
+/* ==================================================================
+   THE THREE BAND TYPES
+   ================================================================== */
+
+/* 1 — cream (default, carries the page) */
+@utility band-paper {
+  background: var(--color-paper);
+}
+
+@utility band-paper-deep {
+  background: var(--color-paper-deep);
+}
+
+/* 2 — crimson silk. Rebuilt from the IMPACT 2025 backdrop ramp.
+   The warm accents are capped-alpha overlays, never solid light stops, and the
+   base ramp is held dark enough that the brightest point the band can reach —
+   rgb(165 50 33), where the flame overlay sits on the lightest base stop —
+   still gives cream 6.0:1, --color-gold-light 5.3:1 and --color-gold 4.5:1.
+   Raise any of these values and small cream text starts failing AA. */
+@utility band-silk {
+  position: relative;
+  isolation: isolate;
+  background-color: #96080b;
+  background-image:
+    radial-gradient(112% 82% at 7% 3%, rgb(251 114 60 / 0.14) 0%, transparent 50%),
+    radial-gradient(74% 58% at 93% 14%, rgb(242 160 61 / 0.12) 0%, transparent 42%),
+    radial-gradient(150% 130% at 74% 96%, #55131d 0%, transparent 58%),
+    radial-gradient(92% 80% at 28% 72%, #820e12 0%, transparent 54%),
+    linear-gradient(146deg, #9c0f16 0%, #96080b 42%, #97281c 74%, #7f0e12 100%);
+  color: var(--color-paper);
+}
+
+/* the fabric striation, sampled off the same slide */
+@utility silk-weave {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.3;
+  background-image: repeating-linear-gradient(
+    118deg,
+    rgb(255 255 255 / 0.075) 0px,
+    rgb(255 255 255 / 0.075) 1px,
+    transparent 1px,
+    transparent 9px,
+    rgb(97 25 37 / 0.11) 9px,
+    rgb(97 25 37 / 0.11) 11px,
+    transparent 11px,
+    transparent 26px
+  );
+  mask-image: radial-gradient(120% 100% at 20% 10%, #000 0%, transparent 78%);
+}
+
+/* 3 — deep (footer only) */
+@utility band-deep {
+  background: var(--color-deep);
+  color: color-mix(in oklab, var(--color-paper) 92%, transparent);
+}
+
+/* ==================================================================
+   THE GRADIENT DEVICE — signature, never behind body text
+   ================================================================== */
+
+@utility rule-sunrise {
+  height: 3px;
+  width: 100%;
+  border: 0;
+  background: var(--sunrise);
+  border-radius: 3px;
+}
+
+@utility rule-hair {
+  height: 1px;
+  width: 100%;
+  border: 0;
+  background: linear-gradient(90deg, var(--color-line) 0%, transparent 100%);
+}
+
+/* the slim crimson bar their IMPACT deck runs top and bottom */
+@utility bar-crimson {
+  background: var(--color-crimson);
+  color: var(--color-paper);
+}
+
+/* ==================================================================
+   BUTTONS — cream text on crimson→ember-mid keeps 5.1:1
+   ================================================================== */
+
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 2.875rem; /* 46px touch target */
+  padding: 0.8125rem 1.5rem;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1px solid transparent;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    color 0.25s var(--ease-soft),
+    background-color 0.25s var(--ease-soft),
+    border-color 0.25s var(--ease-soft),
+    box-shadow 0.3s var(--ease-soft);
+}
+
+@utility btn-primary {
+  background: linear-gradient(100deg, var(--color-crimson-deep) 0%, var(--color-crimson) 40%, var(--color-ember-mid) 100%);
+  background-size: 168% 100%;
+  background-position: 0% 0%;
+  color: var(--color-paper);
+  box-shadow: var(--shadow-glow);
+  transition:
+    background-position 0.55s var(--ease-expo),
+    box-shadow 0.3s var(--ease-soft),
+    transform 0.3s var(--ease-soft);
+}
+@utility btn-primary-hover {
+  background-position: 100% 0%;
+  box-shadow: 0 14px 40px -12px rgb(161 8 10 / 0.55);
+}
+
+@utility btn-outline {
+  background: transparent;
+  color: var(--color-crimson);
+  border-color: color-mix(in oklab, var(--color-crimson) 34%, transparent);
+}
+
+@utility btn-quiet {
+  background: var(--color-paper-lift);
+  color: var(--color-crimson);
+  border-color: var(--color-line);
+  box-shadow: var(--shadow-card);
+}
+
+@utility btn-on-silk {
+  background: color-mix(in oklab, var(--color-paper) 96%, transparent);
+  color: var(--color-crimson);
+  border-color: transparent;
+}
+
+/* ==================================================================
+   LINKS
+   ================================================================== */
+
+@utility link-underline {
+  color: var(--color-crimson);
+  text-decoration: none;
+  background-image: linear-gradient(var(--color-ember), var(--color-ember));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1.5px;
+  transition: background-size 0.35s var(--ease-expo);
+  padding-bottom: 1px;
+}
+
+/* ==================================================================
+   CARDS
+   ================================================================== */
+
+@utility card {
+  position: relative;
+  background: var(--color-paper-lift);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  transition:
+    border-color 0.3s var(--ease-soft),
+    box-shadow 0.4s var(--ease-soft),
+    background-color 0.3s var(--ease-soft);
+}
+
+/* the gradient hairline that lights up along a card's top edge on hover */
+@utility card-edge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  background: var(--sunrise);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.55s var(--ease-expo);
+}
+
+@utility glass-card {
+  background: color-mix(in oklab, var(--color-paper-lift) 92%, transparent);
+  backdrop-filter: blur(14px) saturate(1.05);
+  border: 1px solid color-mix(in oklab, var(--color-paper) 60%, transparent);
+  border-radius: 18px;
+  box-shadow: var(--shadow-lift);
+}
+
+/* ==================================================================
+   MOTION — restrained. Fade-and-rise, once per element.
+   ================================================================== */
+
+@layer components {
+  [data-reveal] {
+    opacity: 0;
+    transition:
+      opacity 0.72s var(--ease-expo),
+      transform 0.72s var(--ease-expo),
+      clip-path 0.8s var(--ease-expo);
+    transition-delay: calc(var(--reveal-delay, 0) * 1ms);
+    will-change: opacity, transform;
+  }
+  [data-reveal='rise'] {
+    transform: translate3d(0, 14px, 0);
+  }
+  [data-reveal='rise-lg'] {
+    transform: translate3d(0, 26px, 0);
+  }
+  [data-reveal='fade'] {
+    transform: none;
+  }
+  [data-reveal='scale'] {
+    transform: scale(0.965);
+  }
+  [data-reveal='wipe'] {
+    clip-path: inset(0 100% 0 0);
+    opacity: 1;
+  }
+  [data-reveal='line'] {
+    transform: scaleX(0);
+    transform-origin: left center;
+    opacity: 1;
+    transition: transform 0.9s var(--ease-expo);
+    transition-delay: calc(var(--reveal-delay, 0) * 1ms);
+  }
+
+  [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 0 0);
+  }
+  [data-reveal='line'].is-in {
+    transform: scaleX(1);
+  }
+
+  /* Anything already on screen before JS runs must not flash. */
+  .no-js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+  }
+
+  /* --- hover intents (no layout shift anywhere) --- */
+  .group\/card:hover .card-edge,
+  .group\/card:focus-within .card-edge {
+    transform: scaleX(1);
+  }
+
+  a.link-underline:hover,
+  a.link-underline:focus-visible {
+    background-size: 100% 1.5px;
+  }
+
+  a.btn-primary:hover,
+  button.btn-primary:hover {
+    background-position: 100% 0%;
+    box-shadow: 0 14px 40px -12px rgb(161 8 10 / 0.55);
+  }
+
+  a.btn-outline:hover,
+  button.btn-outline:hover {
+    background-color: color-mix(in oklab, var(--color-crimson) 8%, transparent);
+    border-color: var(--color-crimson);
+  }
+
+  a.btn-quiet:hover,
+  button.btn-quiet:hover {
+    background-color: var(--color-paper);
+    border-color: color-mix(in oklab, var(--color-crimson) 30%, transparent);
+    box-shadow: var(--shadow-lift);
+  }
+
+  a.btn-on-silk:hover {
+    background-color: var(--color-paper);
+    box-shadow: 0 12px 34px -14px rgb(26 18 16 / 0.5);
+  }
+
+  /* image inside a fixed frame: scale the picture, never the box */
+  .img-frame {
+    overflow: hidden;
+    background: var(--color-paper-deep);
+  }
+  .img-frame img {
+    transition: transform 0.85s var(--ease-expo), filter 0.5s var(--ease-soft);
+  }
+  .group\/card:hover .img-frame img {
+    transform: scale(1.045);
+  }
+
+  /* the hero's drifting leaves — the one thing that moves on its own */
+  .leaf {
+    animation: leaf-drift var(--leaf-dur, 22s) ease-in-out infinite;
+    animation-delay: var(--leaf-delay, 0s);
+    transform-origin: center;
+  }
+
+  @keyframes leaf-drift {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) rotate(0deg);
+      opacity: 0.55;
+    }
+    35% {
+      transform: translate3d(-9px, -13px, 0) rotate(-7deg);
+      opacity: 0.9;
+    }
+    70% {
+      transform: translate3d(-17px, 6px, 0) rotate(5deg);
+      opacity: 0.7;
+    }
+  }
+
+  /* --- hero: line-by-line mask reveal ---------------------------- */
+  .line-mask {
+    display: block;
+    overflow: hidden;
+  }
+  .line-mask > span {
+    display: block;
+    transform: translateY(105%);
+    transition: transform 0.95s var(--ease-expo);
+    transition-delay: calc(var(--line-i, 0) * 110ms + 120ms);
+  }
+  .is-in .line-mask > span,
+  .line-mask.is-in > span {
+    transform: none;
+  }
+
+  /* --- hero: gradient sweeping across the accent line ------------- */
+  .sweep-text {
+    background: linear-gradient(
+      100deg,
+      #a1080a 0%,
+      #a1080a 32%,
+      #e8481f 46%,
+      #f2a03d 54%,
+      #a1080a 68%,
+      #a1080a 100%
+    );
+    background-size: 260% 100%;
+    background-position: 100% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: sweep 7s ease-in-out 1.4s infinite;
+  }
+  @keyframes sweep {
+    0%,
+    22% {
+      background-position: 100% 0;
+    }
+    46%,
+    100% {
+      background-position: 0% 0;
+    }
+  }
+
+  /* --- hero: rotating gradient ring around the badge -------------- */
+  .badge-ring {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    padding: 5px;
+    border-radius: 999px;
+    isolation: isolate;
+  }
+  .badge-ring::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: 999px;
+    background: conic-gradient(from 0deg, #a1080a, #e8481f, #f2a03d, #fdcc4c, #e8481f, #a1080a);
+    animation: badge-spin 9s linear infinite;
+  }
+  .badge-ring::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    z-index: -1;
+    border-radius: 999px;
+    background: var(--color-paper);
+  }
+  @keyframes badge-spin {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+
+  /* --- hero: scroll cue ------------------------------------------- */
+  /* On a short screen the cue is the first thing to go — it is the least
+     load-bearing element in the hero. */
+  @media (max-height: 780px) {
+    .scroll-cue {
+      display: none !important;
+    }
+  }
+
+  .scroll-cue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: var(--text-caption);
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    text-decoration: none;
+    transition: color 0.25s var(--ease-soft);
+  }
+  .scroll-cue:hover {
+    color: var(--color-crimson);
+  }
+  .scroll-cue-track {
+    position: relative;
+    display: block;
+    width: 1.5rem;
+    height: 2.5rem;
+    border: 1.5px solid var(--color-line);
+    border-radius: 999px;
+    flex-shrink: 0;
+    transition: border-color 0.25s var(--ease-soft);
+  }
+  .scroll-cue:hover .scroll-cue-track {
+    border-color: color-mix(in oklab, var(--color-crimson) 45%, transparent);
+  }
+  .scroll-cue-track::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0.4375rem;
+    width: 3px;
+    height: 0.5rem;
+    margin-left: -1.5px;
+    border-radius: 999px;
+    background: var(--sunrise);
+    animation: cue-fall 2.1s ease-in-out infinite;
+  }
+  @keyframes cue-fall {
+    0%,
+    100% {
+      transform: translateY(0);
+      opacity: 0;
+    }
+    25% {
+      opacity: 1;
+    }
+    75% {
+      transform: translateY(1.0625rem);
+      opacity: 0;
+    }
+  }
+
+  .halo {
+    animation: halo-breathe 15s ease-in-out infinite;
+  }
+  @keyframes halo-breathe {
+    0%,
+    100% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.78;
+      transform: scale(1.045);
+    }
+  }
+}
+
+/* ==================================================================
+   PROGRESSIVE DISCLOSURE — long sections collapse behind "see more"
+   ================================================================== */
+
+@layer components {
+  .disclose-window {
+    position: relative;
+  }
+
+  .disclose-body {
+    overflow: hidden;
+    transition: max-height 0.72s var(--ease-expo);
+  }
+
+  .disclose[data-open='false'] .disclose-body {
+    max-height: var(--disclose-peek, 22rem);
+  }
+
+  /* the cream fade that tells you there is more below */
+  .disclose-veil {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 9rem;
+    pointer-events: none;
+    background: linear-gradient(to top, var(--veil-to, var(--color-paper)) 6%, transparent 100%);
+    opacity: 1;
+    transition: opacity 0.45s var(--ease-soft);
+  }
+  .disclose[data-open='true'] .disclose-veil {
+    opacity: 0;
+  }
+
+  .disclose-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .disclose-toggle .chev {
+    transition: transform 0.45s var(--ease-expo);
+  }
+  .disclose[data-open='true'] .disclose-toggle .chev {
+    transform: rotate(180deg);
+  }
+
+  /* count pill on the toggle */
+  .disclose-count {
+    font-variant-numeric: tabular-nums;
+    color: var(--color-muted);
+  }
+}
+
+/* ==================================================================
+   MISC COMPONENTS
+   ================================================================== */
+
+@layer components {
+  /* List marker. A short gradient dash rather than a dot — it echoes the
+     section rules, and it grows a little when its row is hovered. */
+  .bullet-dash {
+    display: block;
+    flex-shrink: 0;
+    margin-top: 0.72em;
+    width: 0.875rem;
+    height: 2px;
+    border-radius: 999px;
+    background: var(--sunrise);
+    transition: width 0.35s var(--ease-expo);
+  }
+  li:hover > .bullet-dash,
+  .group\/card:hover .bullet-dash {
+    width: 1.375rem;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.3125rem 0.6875rem;
+    border-radius: 999px;
+    font-size: var(--text-caption);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    background: color-mix(in oklab, var(--color-crimson) 8%, transparent);
+    color: var(--color-crimson);
+    border: 1px solid color-mix(in oklab, var(--color-crimson) 16%, transparent);
+  }
+
+  .tag-on-silk {
+    background: color-mix(in oklab, #fdeeca 18%, transparent);
+    color: var(--color-paper);
+    border-color: color-mix(in oklab, #fdeeca 30%, transparent);
+  }
+
+  /* a table that reads like an editorial figure, not a spreadsheet */
+  .figure-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+  .figure-table th,
+  .figure-table td {
+    text-align: left;
+    padding: 0.9375rem 1rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .figure-table thead th {
+    font-size: var(--text-caption);
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    border-bottom-color: color-mix(in oklab, var(--color-crimson) 24%, transparent);
+  }
+  .figure-table tbody tr {
+    transition: background-color 0.25s var(--ease-soft);
+  }
+  .figure-table tbody tr:hover {
+    background: color-mix(in oklab, var(--color-crimson) 4%, transparent);
+  }
+  .figure-table td:first-child {
+    font-weight: 500;
+  }
+
+  /* growth bar inside the table */
+  .growth-bar {
+    height: 6px;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--color-crimson) 12%, transparent);
+    overflow: hidden;
+  }
+  .growth-bar > span {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--sunrise);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 1.1s var(--ease-expo);
+    transition-delay: calc(var(--reveal-delay, 0) * 1ms);
+  }
+  .is-in .growth-bar > span,
+  .growth-bar.is-in > span {
+    transform: scaleX(1);
+  }
+
+  /* form fields */
+  .field {
+    display: block;
+    width: 100%;
+    background: var(--color-paper-lift);
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    padding: 0.8125rem 0.9375rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-small);
+    color: var(--color-ash);
+    min-height: 2.875rem;
+    transition:
+      border-color 0.25s var(--ease-soft),
+      box-shadow 0.25s var(--ease-soft),
+      background-color 0.25s var(--ease-soft);
+  }
+  .field::placeholder {
+    color: color-mix(in oklab, var(--color-muted) 78%, transparent);
+  }
+  .field:hover {
+    border-color: color-mix(in oklab, var(--color-crimson) 26%, transparent);
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-crimson);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-crimson) 15%, transparent);
+    background: var(--color-paper-lift);
+  }
+  .field-label {
+    display: block;
+    font-size: var(--text-caption);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: 0.4375rem;
+  }
+
+  /* nav */
+  .nav-shell {
+    transition:
+      background-color 0.4s var(--ease-soft),
+      box-shadow 0.4s var(--ease-soft),
+      backdrop-filter 0.4s var(--ease-soft);
+  }
+  .nav-shell[data-stuck='true'] {
+    /* Deliberately near-opaque: the nav crosses the crimson silk bands, and at
+       lower alpha the links lose contrast against them. */
+    background: rgb(253 238 202 / 0.95);
+    backdrop-filter: blur(16px) saturate(1.08);
+    box-shadow: 0 1px 0 var(--color-line), 0 10px 30px -22px rgb(90 52 20 / 0.4);
+  }
+
+  .nav-link {
+    position: relative;
+    font-size: var(--text-small);
+    font-weight: 500;
+    color: var(--color-ash);
+    text-decoration: none;
+    padding: 0.5rem 0;
+    transition: color 0.25s var(--ease-soft);
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--sunrise);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.4s var(--ease-expo);
+  }
+  .nav-link:hover,
+  .nav-link[aria-current='page'] {
+    color: var(--color-crimson);
+  }
+  .nav-link:hover::after,
+  .nav-link[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+
+  /* dropdown rows */
+  .nav-pop-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.625rem 0.75rem 0.625rem 1rem;
+    border-radius: 11px;
+    text-decoration: none;
+    transition: background-color 0.22s var(--ease-soft);
+  }
+  .nav-pop-item:hover {
+    background: var(--color-paper);
+  }
+  .nav-pop-rail {
+    position: absolute;
+    left: 0.3125rem;
+    top: 50%;
+    width: 2px;
+    height: 0;
+    border-radius: 999px;
+    background: var(--sunrise);
+    transform: translateY(-50%);
+    transition: height 0.32s var(--ease-expo);
+  }
+  .nav-pop-item:hover .nav-pop-rail,
+  .nav-pop-item:focus-visible .nav-pop-rail {
+    height: 62%;
+  }
+  .nav-pop-arrow {
+    flex-shrink: 0;
+    color: var(--color-crimson);
+    opacity: 0;
+    transform: translateX(-6px);
+    transition:
+      opacity 0.28s var(--ease-soft),
+      transform 0.32s var(--ease-expo);
+  }
+  .nav-pop-item:hover .nav-pop-arrow,
+  .nav-pop-item:focus-visible .nav-pop-arrow {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* dropdown */
+  .nav-pop {
+    opacity: 0;
+    transform: translate3d(0, -6px, 0);
+    pointer-events: none;
+    transition:
+      opacity 0.28s var(--ease-soft),
+      transform 0.28s var(--ease-soft);
+  }
+  .nav-group:hover .nav-pop,
+  .nav-group:focus-within .nav-pop {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  /* mobile drawer */
+  .drawer {
+    transform: translate3d(0, -100%, 0);
+    transition: transform 0.5s var(--ease-expo), visibility 0.5s;
+    visibility: hidden;
+  }
+  .drawer[data-open='true'] {
+    transform: none;
+    visibility: visible;
+  }
+}
+
+/* ==================================================================
+   REDUCED MOTION — disables all of it
+   ================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+  .growth-bar > span {
+    transform: scaleX(1) !important;
+  }
+  .leaf,
+  .halo {
+    animation: none !important;
+  }
+  .line-mask > span {
+    transform: none !important;
+  }
+  .sweep-text {
+    animation: none !important;
+    background-position: 0 0 !important;
+  }
+  .badge-ring::before {
+    animation: none !important;
+  }
+  .scroll-cue-track::after {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
+}

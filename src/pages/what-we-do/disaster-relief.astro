@@ -1,0 +1,178 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import CampCard from '@/components/CampCard.astro';
+import DonateBand from '@/components/DonateBand.astro';
+import Icon from '@/components/Icon.astro';
+import Button from '@/components/Button.astro';
+
+const relief = (await getCollection('camps'))
+  .filter((c) => c.data.kind === 'flood-relief')
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const deployments = [
+  {
+    region: 'Khyber Pakhtunkhwa',
+    when: 'August – September 2025',
+    note: 'The first mobilisation of the season, funded by a public appeal. Mobile medical care, rations, hygiene kits and clothing into districts the monsoon had cut off.',
+  },
+  {
+    region: 'Punjab — Chiniot, Bhawana, Jhang',
+    when: '13–15 September 2025',
+    note: 'More than 6,000 patients in three days, treated beside fields still under floodwater. The largest single deployment in RAVISH’s history.',
+  },
+  {
+    region: 'Gilgit-Baltistan',
+    when: '25 September – early October 2025',
+    note: 'A nine-day mission through the north. Roads were damaged or gone, which was both the reason the need existed and the reason nobody else had reached it.',
+  },
+  {
+    region: 'Buner & Shangla',
+    when: 'September 2025',
+    note: 'Flood relief and medical missions into hard-to-reach valleys, run with partner relief organisations.',
+  },
+];
+---
+
+<BaseLayout
+  title="Disaster & Climate Relief"
+  description="The 2025 floods across KPK, Punjab and Gilgit-Baltistan were the largest mobilisation in RAVISH's history — 20+ relief camps and over 6,000 patients in a single three-day deployment."
+>
+  <PageHero
+    eyebrow="20+ relief camps in 2025"
+    title="Disaster & Climate Relief"
+    lead="In a flood, water-borne illness, skin infection, untreated chronic disease and the loss of the house you would have recovered in all arrive at once. Relief work has to treat them as one problem, because that is how they present."
+  />
+
+  <section class="band-silk band-tight relative" aria-label="Relief figures">
+    <span class="silk-weave" aria-hidden="true"></span>
+    <div class="shell relative">
+      <div class="grid gap-8 sm:grid-cols-3">
+        <div data-reveal="rise">
+          <p class="numeral-gold">20+</p>
+          <p class="mt-2 text-small font-medium text-paper">flood relief camps</p>
+          <p class="mt-1 text-caption text-paper/92">Punjab & KPK, 2025 monsoon</p>
+        </div>
+        <div data-reveal="rise" style="--reveal-delay:80">
+          <p class="numeral-gold">6,000+</p>
+          <p class="mt-2 text-small font-medium text-paper">patients in three days</p>
+          <p class="mt-1 text-caption text-paper/92">Chiniot, Bhawana and Jhang</p>
+        </div>
+        <div data-reveal="rise" style="--reveal-delay:160">
+          <p class="numeral-gold">9</p>
+          <p class="mt-2 text-small font-medium text-paper">days in Gilgit-Baltistan</p>
+          <p class="mt-1 text-caption text-paper/92">from 25 September 2025</p>
+        </div>
+      </div>
+
+      <blockquote class="mt-12 border-l-2 border-gold/40 pl-6" data-reveal="rise">
+        <p class="display-quote text-paper">
+          We were treating patients right beside fields still submerged under floodwater — a sight that
+          was both humbling and heartbreaking.
+        </p>
+        <footer class="mt-5 text-small text-paper/92">
+          Day 3, Tehsil Jorana near Jhang — September 2025
+        </footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- deployments -->
+  <section class="band-paper band" aria-labelledby="deployments-title">
+    <div class="shell">
+      <SectionHead
+        id="deployments-title"
+        eyebrow="The 2025 season"
+        title="Four fronts, one monsoon"
+        lead="Led with Dr. Alia Haider, who has run RAVISH's climate and relief work since the crisis began."
+      />
+
+      <ol class="mt-14 flex flex-col gap-0 border-l border-line pl-8">
+        {
+          deployments.map((item, i) => (
+            <li class="relative pb-10" data-reveal="rise" style={`--reveal-delay:${i * 80}`}>
+              <span
+                class="absolute -left-[2.31rem] top-2 block h-3.5 w-3.5 rounded-full"
+                style="background:var(--sunrise);box-shadow:0 0 0 4px var(--color-paper)"
+                aria-hidden="true"
+              />
+              <p class="eyebrow text-muted">{item.when}</p>
+              <h3 class="display-h3 mt-1.5 text-crimson">{item.region}</h3>
+              <p class="measure mt-3 text-body leading-relaxed text-ash">{item.note}</p>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="card mt-6 flex items-start gap-4 p-7" data-reveal="rise">
+        <span class="card-edge" aria-hidden="true"></span>
+        <Icon name="waves" size={20} class="mt-0.5 shrink-0 text-crimson" />
+        <p class="text-small leading-relaxed text-ash">
+          <strong class="font-semibold">This is climate work, and RAVISH says so.</strong> “The
+          conversation reminded us that climate change is not tomorrow’s threat — it’s today’s reality.
+          Families are displaced, communities need urgent medical care.” Strengthening disaster response
+          is one of five stated priorities in IMPACT 2025.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- what goes out -->
+  <section class="band-paper-deep band" aria-labelledby="kit-title">
+    <div class="shell">
+      <SectionHead
+        id="kit-title"
+        eyebrow="What goes out"
+        title="Medical and material, in the same vehicle"
+        align="center"
+      />
+
+      <div class="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {
+          [
+            { icon: 'stethoscope' as const, title: 'Mobile medical care', body: 'Consultations, wound care, and treatment for the water-borne and skin conditions a flood produces within days.' },
+            { icon: 'basket' as const, title: 'Rations', body: 'Food for households whose stored grain and standing crop are both gone.' },
+            { icon: 'droplet' as const, title: 'Hygiene kits', body: 'ORS, antiseptics, soap, sanitary supplies — the cheapest way to stop the second wave of illness.' },
+            { icon: 'shield' as const, title: 'Clothing & shelter support', body: 'Especially where displacement runs into the cold months.' },
+          ].map((item, i) => (
+            <div class="card flex flex-col p-7" data-reveal="rise" style={`--reveal-delay:${i * 85}`}>
+              <span class="card-edge" aria-hidden="true" />
+              <span
+                class="flex h-12 w-12 items-center justify-center rounded-full text-crimson"
+                style="background:color-mix(in oklab, var(--color-crimson) 7%, transparent)"
+              >
+                <Icon name={item.icon} size={22} />
+              </span>
+              <h3 class="display-h3 mt-5 text-crimson">{item.title}</h3>
+              <p class="mt-3 text-small leading-relaxed text-ash">{item.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  {
+    relief.length > 0 && (
+      <section class="band-paper band" aria-labelledby="relief-archive-title">
+        <div class="shell">
+          <div class="flex flex-wrap items-end justify-between gap-6">
+            <SectionHead id="relief-archive-title" eyebrow="Written up" title="Relief deployments" class="flex-1" />
+            <Button href="/what-we-do/medical-camps" variant="quiet" icon="arrowRight" class="shrink-0">
+              All camps
+            </Button>
+          </div>
+          <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {relief.map((camp, i) => (
+              <CampCard {...camp.data} href={`/what-we-do/medical-camps/${camp.id}`} index={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <DonateBand />
+</BaseLayout>

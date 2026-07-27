@@ -1,0 +1,62 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LeafField from '@/components/LeafField.astro';
+import Button from '@/components/Button.astro';
+import Icon from '@/components/Icon.astro';
+
+const suggestions = [
+  { label: 'The RAVISH Clinic', href: '/clinic' },
+  { label: 'Free medical camps', href: '/what-we-do/medical-camps' },
+  { label: 'All 40 cabinets', href: '/chapters' },
+  { label: 'Impact reports', href: '/impact' },
+  { label: 'Volunteer', href: '/get-involved/volunteer' },
+  { label: 'Donate', href: '/donate' },
+];
+---
+
+<BaseLayout title="Page not found" description="That page does not exist.">
+  <section class="band-paper band relative overflow-hidden">
+    <LeafField count={12} />
+
+    <div class="shell-narrow relative">
+      <p class="eyebrow text-crimson" data-reveal="rise">404</p>
+
+      <h1 class="display-h1 mt-4 text-crimson" data-reveal="rise" style="--reveal-delay:70">
+        This path does not go anywhere.
+      </h1>
+
+      <div class="rule-sunrise mt-8" style="max-width:7rem" data-reveal="line" aria-hidden="true"></div>
+
+      <p class="lead measure mt-8" data-reveal="rise" style="--reveal-delay:150">
+        Which is an unfortunate thing to say on a website named after a pavement. The page you asked for
+        is not here — it may have moved, or the link may have been wrong to begin with.
+      </p>
+
+      <ul class="mt-12 grid gap-3 sm:grid-cols-2" data-reveal="rise" style="--reveal-delay:210">
+        {
+          suggestions.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="group/card card flex items-center justify-between gap-4 p-5"
+              >
+                <span class="card-edge" aria-hidden="true" />
+                <span class="text-body font-medium text-ash">{item.label}</span>
+                <Icon
+                  name="arrowRight"
+                  size={17}
+                  class="shrink-0 text-crimson transition-transform duration-400 group-hover/card:translate-x-1"
+                />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="mt-12 flex flex-wrap gap-3" data-reveal="rise">
+        <Button href="/" icon="arrowRight">Back to the homepage</Button>
+        <Button href="/contact" variant="outline">Tell us what broke</Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

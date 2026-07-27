@@ -1,0 +1,64 @@
+---
+import SkewCard from './SkewCard.astro';
+import Icon from './Icon.astro';
+import type { Programme } from '@/data/programmes';
+
+interface Props {
+  programme: Programme;
+  index?: number;
+  showDetail?: boolean;
+}
+
+const { programme: p, index = 0, showDetail = false } = Astro.props;
+---
+
+{
+  showDetail ? (
+    /* the detail view carries too much text for the skew card's fixed frame */
+    <article class="card group/card flex flex-col p-7" data-reveal="rise" style={`--reveal-delay:${index * 65}`}>
+      <span class="card-edge" aria-hidden="true" />
+
+      <div class="flex items-start justify-between gap-4">
+        <span
+          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-crimson transition-colors duration-300 group-hover/card:text-ember"
+          style="background:color-mix(in oklab, var(--color-crimson) 7%, transparent)"
+        >
+          <Icon name={p.icon} size={22} />
+        </span>
+        {p.flagship && <span class="tag shrink-0">Flagship</span>}
+      </div>
+
+      <h3 class="display-h3 mt-5 text-crimson">{p.title}</h3>
+      <p class="mt-2 eyebrow text-muted">{p.scale}</p>
+      <p class="mt-4 text-small leading-relaxed text-ash">{p.summary}</p>
+
+      <ul class="mt-5 flex flex-col gap-3 border-t border-line pt-5">
+        {p.detail.map((line) => (
+          <li class="flex gap-3 text-small leading-relaxed text-ash">
+            <span class="bullet-dash" aria-hidden="true" />
+            <span>{line}</span>
+          </li>
+        ))}
+      </ul>
+
+      {p.href && (
+        <a href={p.href} class="link-underline mt-6 inline-flex items-center gap-2 text-small font-semibold">
+          Read more
+          <Icon name="arrowRight" size={16} />
+        </a>
+      )}
+    </article>
+  ) : (
+    <SkewCard
+      title={p.title}
+      eyebrow={p.scale}
+      body={p.summary}
+      href={p.href}
+      cta="Read more"
+      icon={p.icon}
+      badge={p.flagship ? 'Flagship' : undefined}
+      tone={(index % 4) as 0 | 1 | 2 | 3}
+      index={index}
+    />
+  )
+}

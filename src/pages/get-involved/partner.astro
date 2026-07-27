@@ -1,0 +1,297 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import Field from '@/components/Field.astro';
+import Disclosure from '@/components/Disclosure.astro';
+import Icon from '@/components/Icon.astro';
+import DonateBand from '@/components/DonateBand.astro';
+import { labelStep, partnerGroups, partnerTotal } from '@/data/partners';
+import { site, statusDisclosure } from '@/data/site';
+
+const offers = [
+  {
+    icon: 'stethoscope' as const,
+    title: 'Clinical capacity',
+    body: 'A doctor for a Saturday, a dentist, a lab that will run screening panels at cost. This is the constraint that most often caps a camp’s size.',
+  },
+  {
+    icon: 'basket' as const,
+    title: 'Medicines & consumables',
+    body: 'In-kind supply goes further than cash, especially for the clinic, which has a recurring monthly need rather than a one-off one.',
+  },
+  {
+    icon: 'building' as const,
+    title: 'Premises',
+    body: 'A hall, a school, a clinic room on a day you are closed. Venue is the second constraint after doctors.',
+  },
+  {
+    icon: 'users' as const,
+    title: 'A community that trusts you',
+    body: 'The Label STEP partnership works because Label STEP already had the relationship with the weaving families. RAVISH brought the medicine, not the introduction.',
+  },
+];
+---
+
+<BaseLayout
+  title="Partner with us"
+  description={`RAVISH has enacted ${partnerTotal}+ partnerships with NGOs, hospitals, student organisations and brands — including a formal MoU with Label STEP in Switzerland.`}
+>
+  <PageHero
+    eyebrow={`${partnerTotal}+ partnerships enacted`}
+    title="Partner with RAVISH"
+    lead="Camps need doctors, medicines, premises and someone the community already trusts. Almost none of that comes from us alone, which is why the partner list is longer than the staff list."
+  />
+
+  <!-- Label STEP as the case study -->
+  <section class="band-paper band" aria-labelledby="labelstep-title">
+    <div class="shell">
+      <SectionHead
+        id="labelstep-title"
+        eyebrow="The case study"
+        title="How the Label STEP partnership worked"
+        lead="It is worth reading if you are considering something similar, because the sequence matters more than the paperwork."
+      />
+
+      <div class="card mt-12 grid gap-10 p-8 md:p-10 lg:grid-cols-[1.4fr_1fr]" data-reveal="rise-lg">
+        <span class="card-edge" aria-hidden="true"></span>
+        <div>
+          <div class="flex flex-wrap items-center gap-3">
+            <span class="tag"><Icon name="globe" size={13} /> International</span>
+            <span class="text-caption font-semibold tracking-[0.05em] text-muted uppercase">
+              {labelStep.country}
+            </span>
+          </div>
+          <h3 class="display-h2 mt-5 text-crimson">{labelStep.name}</h3>
+          <div class="mt-5 flex flex-col gap-4">
+            {labelStep.story.map((para) => <p class="measure text-small leading-relaxed text-ash">{para}</p>)}
+          </div>
+          <p class="measure mt-5 text-small leading-relaxed text-ash">
+            <strong class="font-semibold">The sequence:</strong> one camp, informally, in September 2024.
+            Then seven months of that working before anyone signed anything. The MoU in April 2025
+            formalised a relationship that already existed — which is the only order in which these tend
+            to survive.
+          </p>
+        </div>
+
+        <dl class="flex flex-col gap-5 self-start rounded-[12px] p-6" style="background:var(--color-paper)">
+          {
+            labelStep.facts.map((fact) => (
+              <div class="flex flex-col gap-1">
+                <dt class="eyebrow text-muted">{fact.label}</dt>
+                <dd class="text-small font-semibold text-crimson">{fact.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- what helps -->
+  <section class="band-paper-deep band" aria-labelledby="offers-title">
+    <div class="shell">
+      <SectionHead id="offers-title" eyebrow="What actually helps" title="Four things worth more than a logo swap" />
+
+      <div class="mt-14 grid gap-6 md:grid-cols-2">
+        {
+          offers.map((offer, i) => (
+            <div class="card flex gap-5 p-7" data-reveal="rise" style={`--reveal-delay:${i * 85}`}>
+              <span class="card-edge" aria-hidden="true" />
+              <span
+                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-crimson"
+                style="background:color-mix(in oklab, var(--color-crimson) 7%, transparent)"
+              >
+                <Icon name={offer.icon} size={22} />
+              </span>
+              <div>
+                <h3 class="display-h3 text-crimson">{offer.title}</h3>
+                <p class="mt-2.5 text-small leading-relaxed text-ash">{offer.body}</p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- existing partners -->
+      <div class="mt-16">
+        <h3 class="display-h3 text-crimson" data-reveal="rise">Who we already work with</h3>
+        <div class="mt-8">
+          <Disclosure
+            peek="16rem"
+            moreLabel="See every partner"
+            lessLabel="Show fewer"
+            count={`${partnerGroups.reduce((n, g) => n + g.items.length, 0)} organisations`}
+            veil="paper-deep"
+          >
+            <div class="grid gap-10 md:grid-cols-2">
+              {
+                partnerGroups.map((group, gi) => (
+                  <div data-reveal="rise" style={`--reveal-delay:${gi * 65}`}>
+                    <h4 class="text-body font-semibold text-crimson">{group.heading}</h4>
+                    <p class="mt-1.5 text-caption text-muted">{group.blurb}</p>
+                    <ul class="mt-4 flex flex-col gap-2.5">
+                      {group.items.map((item) => (
+                        <li class="flex items-baseline gap-2.5 text-small text-ash">
+                          <span class="bullet-dash" aria-hidden="true" />
+                          <span>
+                            {item.name}
+                            {item.note && <span class="text-muted"> — {item.note}</span>}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))
+              }
+            </div>
+          </Disclosure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- the form -->
+  <section class="band-paper band" aria-labelledby="partner-form-title">
+    <div class="shell">
+      <div class="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
+        <div>
+          <SectionHead id="partner-form-title" eyebrow="Start a conversation" title="Tell us what you have in mind" />
+
+          <form
+            name="partner"
+            method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            action="/get-involved/thanks/"
+            class="mt-10 flex flex-col gap-6"
+          >
+            <input type="hidden" name="form-name" value="partner" />
+            <p class="hidden">
+              <label>Leave this empty <input name="bot-field" /></label>
+            </p>
+
+            <div class="grid gap-6 sm:grid-cols-2">
+              <Field label="Organisation" name="organisation" required placeholder="Legal or trading name" />
+              <Field
+                label="Type of organisation"
+                name="type"
+                type="select"
+                required
+                options={[
+                  'NGO or foundation',
+                  'Hospital or clinic',
+                  'Laboratory or diagnostics',
+                  'Pharmacy or distributor',
+                  'Company or brand',
+                  'Student organisation',
+                  'Government or public body',
+                  'Something else',
+                ]}
+              />
+            </div>
+
+            <div class="grid gap-6 sm:grid-cols-2">
+              <Field label="Your name" name="name" required autocomplete="name" />
+              <Field label="Your role" name="role" placeholder="e.g. Programme Manager" />
+            </div>
+
+            <div class="grid gap-6 sm:grid-cols-2">
+              <Field label="Email" name="email" type="email" required autocomplete="email" />
+              <Field label="Phone" name="phone" type="tel" autocomplete="tel" />
+            </div>
+
+            <Field label="City or region" name="city" required />
+
+            <fieldset>
+              <legend class="field-label">What could you offer?</legend>
+              <div class="mt-2 grid gap-2.5 sm:grid-cols-2">
+                {
+                  [
+                    'Doctors or clinical staff',
+                    'Medicines or consumables',
+                    'Diagnostics or lab capacity',
+                    'A venue or premises',
+                    'Access to a community',
+                    'Funding or sponsorship',
+                    'Logistics or transport',
+                    'Something else',
+                  ].map((option) => (
+                    <label class="flex cursor-pointer items-start gap-2.5 text-small text-ash">
+                      <input
+                        type="checkbox"
+                        name="offering"
+                        value={option}
+                        class="mt-1 h-4 w-4 shrink-0 cursor-pointer accent-crimson"
+                      />
+                      <span>{option}</span>
+                    </label>
+                  ))
+                }
+              </div>
+            </fieldset>
+
+            <Field
+              label="What are you thinking of?"
+              name="message"
+              type="textarea"
+              required
+              rows={5}
+              placeholder="A specific first activity is more useful to us than a general offer of collaboration."
+            />
+
+            <div class="flex flex-wrap items-center gap-4 pt-2">
+              <button type="submit" class="btn btn-primary px-7 py-4 text-body">
+                Send
+                <Icon name="arrowRight" size={17} />
+              </button>
+              <p class="text-caption text-muted">
+                Or write to
+                <a href={`mailto:${site.email}`} class="link-underline font-semibold">{site.email}</a>
+              </p>
+            </div>
+          </form>
+        </div>
+
+        <aside class="flex flex-col gap-5">
+          <div class="card p-7">
+            <span class="card-edge" aria-hidden="true"></span>
+            <p class="eyebrow text-crimson">Before you commit, read this</p>
+            <p class="mt-4 text-small leading-relaxed text-ash">
+              {statusDisclosure.short} If registered charitable status is a requirement for your CSR,
+              procurement or grant process — as it is for many institutional partners — RAVISH does not
+              currently meet it.
+            </p>
+            <p class="mt-4 text-small leading-relaxed text-ash">
+              We would rather you knew that at this stage than at the contracting stage.
+            </p>
+            <a href="/donate#status" class="link-underline mt-5 inline-flex items-center gap-2 text-small font-semibold">
+              The full disclosure <Icon name="arrowRight" size={15} />
+            </a>
+          </div>
+
+          <div class="card p-7">
+            <span class="card-edge" aria-hidden="true"></span>
+            <p class="eyebrow text-crimson">How we tend to start</p>
+            <p class="mt-4 text-small leading-relaxed text-ash">
+              One camp together, informally, before any document exists. If it works, we formalise it. Both
+              the Label STEP MoU and the Care Campaign PK MoU followed that order.
+            </p>
+          </div>
+
+          <div class="card p-7">
+            <span class="card-edge" aria-hidden="true"></span>
+            <p class="eyebrow text-crimson">Cause marketing</p>
+            <p class="mt-4 text-small leading-relaxed text-ash">
+              A share of sales on a RAVISH code works and is underused. Pappa’s Pizza runs
+              <code class="rounded bg-paper px-1.5 py-0.5 text-caption">RPZ1</code> and Lemon n Pepper runs
+              <code class="rounded bg-paper px-1.5 py-0.5 text-caption">RAV10</code>.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <DonateBand compact />
+</BaseLayout>

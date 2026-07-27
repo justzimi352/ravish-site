@@ -1,0 +1,116 @@
+---
+import { Image } from 'astro:assets';
+import logo from '@/assets/logo-ravish.png';
+
+/**
+ * The supplied logo is a knockout — the tree, leaves and Urdu wordmark are
+ * punched through to #FDEECA and there is no alpha channel. It therefore only
+ * works on --paper. `variant="badge"` is that file.
+ *
+ * `variant="mark"` is a tintable SVG derived from the same artwork, for the
+ * places the PNG cannot go: the deep footer, the crimson bands, the favicon.
+ * Ask the designer for a real SVG and a transparent PNG when you can.
+ */
+interface Props {
+  variant?: 'badge' | 'mark' | 'lockup';
+  size?: number;
+  class?: string;
+  /** mark/lockup only — 'ink' on cream, 'cream' on crimson or deep */
+  tone?: 'ink' | 'cream';
+  showUrdu?: boolean;
+}
+
+const {
+  variant = 'badge',
+  size = 88,
+  class: className = '',
+  tone = 'ink',
+  showUrdu = true,
+} = Astro.props;
+
+const leafTone = tone === 'cream' ? '#FDCC4C' : '#F2A03D';
+const sphereFrom = tone === 'cream' ? '#FDEECA' : '#F87D05';
+const sphereTo = tone === 'cream' ? '#F2A03D' : '#A1080A';
+const treeTone = tone === 'cream' ? '#FDEECA' : '#A1080A';
+const uid = Math.random().toString(36).slice(2, 8);
+---
+
+{
+  variant === 'badge' && (
+    <Image
+      src={logo}
+      alt="RAVISH — روش"
+      width={size}
+      height={size}
+      widths={[size, size * 2]}
+      quality={90}
+      loading="eager"
+      class={className}
+    />
+  )
+}
+
+{
+  variant !== 'badge' && (
+    <span class={`inline-flex items-center gap-3 ${className}`}>
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 64 64"
+        fill="none"
+        aria-hidden={variant === 'mark' ? undefined : 'true'}
+        role={variant === 'mark' ? 'img' : undefined}
+        aria-label={variant === 'mark' ? 'RAVISH' : undefined}
+        class="shrink-0"
+      >
+        <defs>
+          <radialGradient id={`sph-${uid}`} cx="32%" cy="28%" r="82%">
+            <stop offset="0%" stop-color={sphereFrom} />
+            <stop offset="100%" stop-color={sphereTo} />
+          </radialGradient>
+        </defs>
+        {/* the sphere */}
+        <circle cx="34" cy="36" r="21" fill={`url(#sph-${uid})`} opacity={tone === 'cream' ? 0.9 : 1} />
+        {/* the tree, punched over it */}
+        <g stroke={treeTone} stroke-width="2.1" stroke-linecap="round" fill="none">
+          <path d="M34 55V29" />
+          <path d="M34 38c-4.4-1.1-7-4-8-8.4" />
+          <path d="M34 33.5c4.1-1.4 6.4-4.2 7.2-8.2" />
+          <path d="M34 44c-3.1-.8-5.1-2.6-6-5.4" />
+        </g>
+        {/* leaves drifting left, as in the original */}
+        <g fill={leafTone}>
+          <ellipse cx="21" cy="20" rx="3.4" ry="2" transform="rotate(-28 21 20)" />
+          <ellipse cx="14" cy="25" rx="2.8" ry="1.7" transform="rotate(-40 14 25)" opacity="0.85" />
+          <ellipse cx="26" cy="14" rx="2.6" ry="1.6" transform="rotate(-18 26 14)" opacity="0.9" />
+          <ellipse cx="8" cy="31" rx="2.2" ry="1.4" transform="rotate(-52 8 31)" opacity="0.62" />
+          <ellipse cx="18" cy="11" rx="2" ry="1.3" transform="rotate(-12 18 11)" opacity="0.7" />
+        </g>
+      </svg>
+
+      {variant === 'lockup' && (
+        <span class="flex flex-col leading-none">
+          <span
+            class="font-display font-semibold tracking-[0.1em]"
+            style={`font-size:${Math.max(24, Math.round(size * 0.34))}px; color:${
+              tone === 'cream' ? '#FDEECA' : '#A1080A'
+            }`}
+          >
+            RAVISH
+          </span>
+          {showUrdu && (
+            <span
+              lang="ur"
+              class="mt-0.5"
+              style={`font-size:${Math.round(size * 0.26)}px; line-height:2; color:${
+                tone === 'cream' ? '#FDCC4C' : '#6E5C50'
+              }`}
+            >
+              روش
+            </span>
+          )}
+        </span>
+      )}
+    </span>
+  )
+}

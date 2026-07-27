@@ -1,0 +1,54 @@
+---
+interface Props {
+  quote: string;
+  attribution: string;
+  context: string;
+  date?: string;
+  href?: string;
+  index?: number;
+  tone?: 'ink' | 'cream';
+  size?: 'md' | 'lg';
+}
+
+const {
+  quote,
+  attribution,
+  context,
+  date,
+  href,
+  index = 0,
+  tone = 'ink',
+  size = 'md',
+} = Astro.props;
+
+const cream = tone === 'cream';
+const Tag = href ? 'a' : 'figure';
+---
+
+<Tag
+  href={href}
+  class={`group/card m-0 flex flex-col ${
+    cream ? 'glass-card' : 'card'
+  } p-7 md:p-8 ${href ? 'cursor-pointer' : ''}`}
+  data-reveal="rise"
+  style={`--reveal-delay:${index * 80}`}
+>
+  {!cream && <span class="card-edge" aria-hidden="true"></span>}
+
+  <span
+    class="font-display leading-none select-none"
+    style={`font-size:3.25rem;color:${cream ? 'var(--color-gold)' : 'var(--color-saffron)'};opacity:.85`}
+    aria-hidden="true">&ldquo;</span
+  >
+
+  <blockquote class={`${size === 'lg' ? 'display-quote' : 'display-h3'} -mt-3 text-crimson`}>
+    {quote}
+  </blockquote>
+
+  <figcaption class="mt-6 flex flex-col gap-0.5 border-t border-line pt-5">
+    <span class="text-small font-semibold text-ash">{attribution}</span>
+    <span class="text-caption text-muted">
+      {context}{date ? ` · ${date}` : ''}
+    </span>
+  </figcaption>
+</Tag>

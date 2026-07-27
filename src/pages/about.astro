@@ -1,0 +1,359 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import Disclosure from '@/components/Disclosure.astro';
+import Button from '@/components/Button.astro';
+import Icon from '@/components/Icon.astro';
+import DonateBand from '@/components/DonateBand.astro';
+import { site, statusDisclosure } from '@/data/site';
+import { timeline, governance, people } from '@/data/timeline';
+import { chapters } from '@/data/chapters';
+import { sayings } from '@/data/voices';
+
+import groupPhoto from '@/assets/photos/orphanage-group.jpg';
+import womanPhoto from '@/assets/photos/portrait-woman.jpg';
+
+const majorMilestones = timeline.filter((m) => m.weight === 'major');
+const activeCabinets = chapters.filter((c) => !c.dormant).length;
+---
+
+<BaseLayout
+  title="About RAVISH"
+  description="RAVISH is a student-led healthcare organisation founded on 7 March 2024 by final-year MBBS students at Lahore Medical & Dental College. How it started, how it is run, and what it is and is not."
+>
+  <PageHero
+    eyebrow={`Founded ${site.founded}`}
+    title="A path built on kindness"
+    urdu={site.tagline}
+    lead="RAVISH began as an idea among final-year medical students in Lahore: that a degree in progress is already useful, and that health equity does not have to wait until you qualify."
+  />
+
+  <!-- the name -->
+  <section class="band-paper band-tight" aria-labelledby="name-title">
+    <div class="shell-narrow">
+      <p class="eyebrow text-crimson" data-reveal="rise">The name</p>
+      <h2 id="name-title" class="display-h1 mt-5 text-crimson" data-reveal="rise" style="--reveal-delay:70">
+        <span lang="ur" class="mr-3 inline-block">روش</span>
+        Ravish — a path, a pavement
+      </h2>
+      <div class="rule-sunrise mt-7" style="max-width:6rem;--reveal-delay:140" data-reveal="line" aria-hidden="true"></div>
+
+      <blockquote class="mt-8" data-reveal="rise" style="--reveal-delay:180">
+        <p class="lead text-ash">
+          A pavement built on kindness, and a journey where every step leads to hope. It is the bridge
+          between those who wish to give and those who need to receive, a movement that turns empathy
+          into action. Through every effort, every hand extended, and every life touched, Ravish becomes
+          more than just a name.
+        </p>
+        <footer class="mt-6 text-caption text-muted">RAVISH, 5 September 2025</footer>
+      </blockquote>
+
+      <div class="mt-10 rounded-[14px] p-7" style="background:var(--color-paper-deep)" data-reveal="rise">
+        <p class="eyebrow text-crimson">The tagline</p>
+        <p lang="ur" class="urdu-tagline mt-4 text-crimson">{site.tagline}</p>
+        <p class="mt-1 text-small text-muted italic">{site.taglineRoman}</p>
+        <p class="mt-3 text-body font-medium text-ash">“{site.taglineEnglish}”</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- the founding -->
+  <section class="band-paper-deep band" aria-labelledby="founding-title">
+    <div class="shell">
+      <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+        <div>
+          <SectionHead id="founding-title" eyebrow="How it started" title="Seven days from launch to first camp" />
+
+          <div class="mt-9 flex flex-col gap-5">
+            <p class="measure text-body text-ash">
+              RAVISH launched on {site.founded}, founded by final-year MBBS students at
+              {' '}{site.college}. The launch statement is worth quoting because it is still the whole
+              argument:
+            </p>
+            <blockquote class="border-l-2 border-crimson/25 pl-6">
+              <p class="measure text-body text-ash italic">
+                “We are thrilled to announce the launch of Ravish, a pioneering initiative driven by the
+                passion and dedication of medical students like you. With a shared vision of promoting
+                health equity and fostering community well-being, we embark on a journey of service and
+                impact. At Ravish, we believe that every individual deserves access to quality
+                healthcare, regardless of their socio-economic background.”
+              </p>
+            </blockquote>
+            <p class="measure text-body text-ash">
+              The first medical camp ran six days later and saw over two hundred patients. By October of
+              that first year a single camp in Kasur saw 537. Two years on there are
+              {' '}{activeCabinets} local cabinets, a permanent clinic, and more than fifteen thousand
+              patients treated.
+            </p>
+            <p class="measure text-body text-ash">
+              {site.founded} is now marked annually as <strong class="font-semibold">Ravish Day</strong>.
+            </p>
+          </div>
+
+          <h3 class="display-h3 mt-12 text-crimson">The problem it exists to solve</h3>
+          <p class="measure mt-4 text-body text-ash">
+            Pakistan continues to face limited access to quality healthcare in underserved regions,
+            recurrent humanitarian emergencies, low preventive health awareness, gaps in youth-led
+            service delivery, and fragmented outreach efforts. RAVISH was created to bridge these gaps by
+            combining medical expertise, youth leadership, and organised service delivery.
+          </p>
+          <p class="mt-3 text-caption text-muted">RAVISH, IMPACT 2025</p>
+        </div>
+
+        <div class="flex flex-col gap-6">
+          <figure class="m-0" data-reveal="rise-lg">
+            <div class="img-frame card overflow-hidden rounded-[18px] p-0">
+              <Image
+                src={groupPhoto}
+                alt="RAVISH volunteers with children during a visit"
+                widths={[400, 640]}
+                sizes="(min-width:1024px) 40vw, 92vw"
+                quality={82}
+                class="aspect-[4/3] w-full object-cover"
+              />
+            </div>
+            <figcaption class="mt-3 text-caption text-muted">Volunteers on an orphanage visit.</figcaption>
+          </figure>
+
+          <div class="card p-7">
+            <h3 class="display-h3 text-crimson">Mission</h3>
+            <p class="mt-3 text-small leading-relaxed text-ash">
+              To provide free and quality healthcare to underserved communities while empowering youth to
+              lead with responsibility and compassion.
+            </p>
+            <hr class="my-6 border-line" />
+            <h3 class="display-h3 text-crimson">Vision</h3>
+            <p class="mt-3 text-small leading-relaxed text-ash">
+              A healthier and more just Pakistan, where access to healthcare is a right and young leaders
+              drive sustainable social change.
+            </p>
+          </div>
+
+          <div class="card p-7">
+            <p class="eyebrow text-crimson">The line that runs through it</p>
+            <p lang="ur" class="mt-5 text-[1.375rem] text-ash" style="line-height:2.2">{sayings[0].urdu}</p>
+            <p class="mt-2 text-small text-muted italic">“{sayings[0].english}”</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- timeline -->
+  <section class="band-paper band" aria-labelledby="timeline-title">
+    <div class="shell">
+      <SectionHead
+        id="timeline-title"
+        eyebrow="The record"
+        title="Two and a half years, in order"
+        lead={`${timeline.length} dated milestones, from the launch post to the most recent Memorandum of Understanding.`}
+      />
+
+      <div class="mt-14">
+        <Disclosure
+          peek="30rem"
+          moreLabel="Show the full timeline"
+          lessLabel="Show the highlights only"
+          count={`${timeline.length - majorMilestones.length} more entries`}
+          veil="paper"
+        >
+          <ol class="relative flex flex-col gap-0 border-l border-line pl-8">
+            {
+              timeline.map((item, i) => (
+                <li class="relative pb-9" data-reveal="rise" style={`--reveal-delay:${Math.min(i, 8) * 50}`}>
+                  <span
+                    class={`absolute -left-[2.28rem] top-1.5 block rounded-full ${
+                      item.weight === 'major' ? 'h-3.5 w-3.5' : 'h-2 w-2'
+                    }`}
+                    style={
+                      item.weight === 'major'
+                        ? 'background:var(--sunrise);box-shadow:0 0 0 4px var(--color-paper)'
+                        : 'background:var(--color-line);box-shadow:0 0 0 4px var(--color-paper)'
+                    }
+                    aria-hidden="true"
+                  />
+                  <time datetime={item.iso} class="eyebrow text-muted">{item.date}</time>
+                  <h3
+                    class={`mt-1.5 ${item.weight === 'major' ? 'display-h3 text-crimson' : 'text-body font-semibold text-ash'}`}
+                  >
+                    {item.title}
+                  </h3>
+                  {item.note && <p class="measure mt-2 text-small leading-relaxed text-muted">{item.note}</p>}
+                </li>
+              ))
+            }
+          </ol>
+        </Disclosure>
+      </div>
+    </div>
+  </section>
+
+  <!-- governance -->
+  <section class="band-paper-deep band" id="governance" style="scroll-margin-top:6rem" aria-labelledby="gov-title">
+    <div class="shell">
+      <SectionHead
+        id="gov-title"
+        eyebrow="Governance"
+        title="How RAVISH is run"
+        lead={governance.term}
+      />
+
+      <div class="mt-14 grid gap-6 lg:grid-cols-3">
+        <div class="card p-8" data-reveal="rise">
+          <span class="card-edge" aria-hidden="true"></span>
+          <p class="eyebrow text-crimson">Tier one</p>
+          <h3 class="display-h3 mt-2 text-crimson">National Cabinet</h3>
+          <p class="mt-2 text-caption text-muted">Based in Lahore</p>
+          <ul class="mt-5 flex flex-col gap-3">
+            {
+              governance.national.map((role) => (
+                <li class="flex gap-2.5 text-small leading-relaxed text-ash">
+                  <span class="bullet-dash" aria-hidden="true" />
+                  <span>{role}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="card p-8" data-reveal="rise" style="--reveal-delay:90">
+          <span class="card-edge" aria-hidden="true"></span>
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="eyebrow text-crimson">Tier two</p>
+              <h3 class="display-h3 mt-2 text-crimson">Regional Coordinators</h3>
+            </div>
+            <span class="tag shrink-0">New for 2026–27</span>
+          </div>
+          <p class="mt-5 text-small leading-relaxed text-ash">{governance.regional}</p>
+        </div>
+
+        <div class="card p-8" data-reveal="rise" style="--reveal-delay:180">
+          <span class="card-edge" aria-hidden="true"></span>
+          <p class="eyebrow text-crimson">Tier three</p>
+          <h3 class="display-h3 mt-2 text-crimson">{activeCabinets}+ Local Cabinets</h3>
+          <p class="mt-2 text-caption text-muted">One per medical college</p>
+          <ul class="mt-5 flex flex-col gap-3">
+            {
+              governance.local.map((role) => (
+                <li class="flex gap-2.5 text-small leading-relaxed text-ash">
+                  <span class="bullet-dash" aria-hidden="true" />
+                  <span>{role}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <a href="/chapters" class="link-underline mt-5 inline-flex items-center gap-2 text-small font-semibold">
+            See all cabinets <Icon name="arrowRight" size={15} />
+          </a>
+        </div>
+      </div>
+
+      <!-- named people -->
+      <div class="mt-16">
+        <h3 class="display-h3 text-crimson" data-reveal="rise">Some of the people</h3>
+        <p class="mt-3 max-w-[62ch] text-small leading-relaxed text-muted" data-reveal="rise">
+          RAVISH is a student organisation with terms that turn over every July, so any list is a
+          snapshot. These are people named in RAVISH’s own published material.
+        </p>
+
+        <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            people.map((person, i) => (
+              <li class="card flex flex-col p-6" data-reveal="rise" style={`--reveal-delay:${i * 55}`}>
+                <span class="card-edge" aria-hidden="true" />
+                <p class="text-body font-semibold text-ash">{person.name}</p>
+                <p class="mt-1.5 text-small text-muted">{person.role}</p>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="mt-6 text-caption text-muted" data-reveal="fade">
+          The current National President is not named in RAVISH’s published material, so is not listed
+          here rather than guessed at.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- capacity building -->
+  <section class="band-paper band" aria-labelledby="capacity-title">
+    <div class="shell">
+      <div class="grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
+        <div>
+          <SectionHead id="capacity-title" eyebrow="Training" title="What volunteers are taught" />
+          <p class="measure mt-8 text-body text-ash">
+            RAVISH invests in structured capacity-building of its volunteers through training in basic
+            screening and triage, compassionate patient interaction, and medical ethics. Emphasis is
+            placed on leadership development, enabling students to plan, coordinate, and lead community
+            health initiatives effectively.
+          </p>
+          <p class="mt-3 text-caption text-muted">RAVISH, IMPACT 2025</p>
+
+          <p class="measure mt-8 text-body text-ash">
+            The second half of that matters as much as the first. A cabinet president in their fourth
+            year of medical school is running budgets, logistics, partnerships and a team of dozens.
+            That is the part that does not appear in any patient count.
+          </p>
+        </div>
+
+        <figure class="m-0" data-reveal="rise-lg">
+          <div class="img-frame card overflow-hidden rounded-[18px] p-0">
+            <Image
+              src={womanPhoto}
+              alt="A patient at a RAVISH camp"
+              widths={[400, 640]}
+              sizes="(min-width:1024px) 44vw, 92vw"
+              quality={84}
+              class="aspect-[4/5] w-full object-cover"
+            />
+          </div>
+          <figcaption class="mt-3 text-caption text-muted">At a RAVISH welfare drive.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- legal status -->
+  <section class="band-paper-deep band" id="status" style="scroll-margin-top:6rem" aria-labelledby="status-title">
+    <div class="shell-narrow">
+      <SectionHead
+        id="status-title"
+        eyebrow="Being straight about it"
+        title="What RAVISH is, and what it is not"
+      />
+
+      <div class="card mt-10 p-8 md:p-10" data-reveal="rise">
+        <span class="card-edge" aria-hidden="true"></span>
+        <p class="text-body leading-relaxed text-ash">
+          RAVISH is a <strong class="font-semibold">student-led organisation</strong>. It is
+          <strong class="font-semibold"> not</strong> a registered NGO and
+          <strong class="font-semibold"> not</strong> a Section 42 not-for-profit company. It was formed
+          by medical students for the purpose of spreading health awareness and helping the less
+          fortunate.
+        </p>
+        <p class="mt-5 text-body leading-relaxed text-ash">
+          The name “RAVISH NGO” is the one the organisation is known by publicly, including on its own
+          social accounts, and it is used here for that reason. It should not be read as a claim of
+          registered charitable status.
+        </p>
+        <p class="mt-5 text-body leading-relaxed text-ash">
+          Because RAVISH is not a registered charity, it
+          <strong class="font-semibold"> cannot issue tax-exempt receipts</strong>. Funds are tracked on
+          an activity-wise basis, and if you want to know how a particular contribution was used, write
+          to <a href={`mailto:${site.email}`} class="link-underline font-semibold">{site.email}</a> and
+          you will be told.
+        </p>
+
+        <div class="mt-8 flex flex-wrap gap-3 border-t border-line pt-7">
+          <Button href="/donate" icon="arrowRight">Read the full donation terms</Button>
+          <Button href="/contact" variant="outline">Ask a question</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <DonateBand compact />
+</BaseLayout>

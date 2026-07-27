@@ -1,0 +1,154 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import Field from '@/components/Field.astro';
+import Icon from '@/components/Icon.astro';
+import DonateBand from '@/components/DonateBand.astro';
+import { site } from '@/data/site';
+---
+
+<BaseLayout
+  title="Ambassador Program"
+  description="Be the first RAVISH presence on your campus. The Ambassador Program launched November 2024 and now has 40+ ambassadors working across Pakistan."
+>
+  <PageHero
+    eyebrow="40+ ambassadors working"
+    title="Ambassador Program"
+    lead="An ambassador is RAVISH on a campus that does not have a cabinet yet. It is the lightest commitment we offer and the most common route into founding a chapter."
+  />
+
+  <section class="band-paper band" aria-labelledby="what-title">
+    <div class="shell">
+      <div class="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+        <div>
+          <SectionHead id="what-title" eyebrow="The role" title="What an ambassador actually does" />
+
+          <ul class="mt-10 flex flex-col gap-5">
+            {
+              [
+                {
+                  title: 'Represents RAVISH on campus',
+                  body: 'You are the person other students at your college ask about it. That is most of the job.',
+                },
+                {
+                  title: 'Runs awareness activity locally',
+                  body: 'A hepatitis talk, a menstrual health session in a nearby school, a dengue drive during the monsoon. Small, local, and yours to plan.',
+                },
+                {
+                  title: 'Recruits volunteers',
+                  body: 'When a cabinet in a nearby city runs a camp, you are where the extra hands come from.',
+                },
+                {
+                  title: 'Fundraises',
+                  body: 'Ambassadors run collection drives for camps and appeals. The Fundraising Ambassador role sits in the National Cabinet.',
+                },
+                {
+                  title: 'Often founds the cabinet',
+                  body: 'Several current local cabinet presidents started as the ambassador at a college with no chapter. That is the intended path, not a coincidence.',
+                },
+              ].map((item, i) => (
+                <li class="card flex gap-5 p-6" data-reveal="rise" style={`--reveal-delay:${i * 75}`}>
+                  <span class="card-edge" aria-hidden="true" />
+                  <span
+                    class="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-crimson"
+                    style="background:color-mix(in oklab, var(--color-crimson) 7%, transparent)"
+                  >
+                    <Icon name="sparkle" size={18} />
+                  </span>
+                  <div>
+                    <h3 class="text-body font-semibold text-ash">{item.title}</h3>
+                    <p class="mt-1.5 text-small leading-relaxed text-muted">{item.body}</p>
+                  </div>
+                </li>
+              ))
+            }
+          </ul>
+
+          <div class="card mt-8 p-7" data-reveal="rise">
+            <span class="card-edge" aria-hidden="true"></span>
+            <p class="eyebrow text-crimson">History</p>
+            <p class="mt-4 text-small leading-relaxed text-ash">
+              The programme launched on 15 November 2024 and was relaunched in October 2025 with a wider
+              intake. Twenty ambassadors in 2024 became more than forty in 2025.
+            </p>
+          </div>
+        </div>
+
+        <!-- application -->
+        <div>
+          <h2 class="display-h2 text-crimson" data-reveal="rise">Apply</h2>
+          <div class="rule-sunrise mt-6" style="max-width:5rem" data-reveal="line" aria-hidden="true"></div>
+          <p class="mt-6 text-small leading-relaxed text-muted" data-reveal="rise">
+            Intakes are announced on Instagram, but you do not have to wait for one — send this and the
+            Ambassador Coordinator will pick it up.
+          </p>
+
+          <form
+            name="ambassador"
+            method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            action="/get-involved/thanks/"
+            class="mt-9 flex flex-col gap-6"
+          >
+            <input type="hidden" name="form-name" value="ambassador" />
+            <p class="hidden">
+              <label>Leave this empty <input name="bot-field" /></label>
+            </p>
+
+            <Field label="Full name" name="name" required autocomplete="name" />
+            <Field label="Email" name="email" type="email" required autocomplete="email" />
+            <Field label="Phone or WhatsApp" name="phone" type="tel" required autocomplete="tel" />
+            <div class="grid gap-6 sm:grid-cols-2">
+              <Field label="College" name="institution" required placeholder="Full name of your college" />
+              <Field label="City" name="city" required />
+            </div>
+            <Field
+              label="Year of study"
+              name="year"
+              type="select"
+              required
+              options={['1st year', '2nd year', '3rd year', '4th year', '5th year', 'Graduate / House job']}
+            />
+            <Field
+              label="Why you, and what would you run first?"
+              name="motivation"
+              type="textarea"
+              required
+              rows={5}
+              placeholder="One specific thing you would organise in your first term is more persuasive than a general statement."
+            />
+
+            <label class="flex cursor-pointer items-start gap-3 text-small text-ash">
+              <input
+                type="checkbox"
+                name="consent"
+                value="yes"
+                required
+                class="mt-1 h-4 w-4 shrink-0 cursor-pointer accent-crimson"
+              />
+              <span>
+                I am happy for RAVISH to contact me about this application.
+                <span class="text-ember">*</span>
+              </span>
+            </label>
+
+            <div class="flex flex-wrap items-center gap-4 pt-2">
+              <button type="submit" class="btn btn-primary px-7 py-4 text-body">
+                Send application
+                <Icon name="arrowRight" size={17} />
+              </button>
+              <p class="text-caption text-muted">
+                Or email
+                <a href={`mailto:${site.email}`} class="link-underline font-semibold">{site.email}</a>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <DonateBand compact />
+</BaseLayout>

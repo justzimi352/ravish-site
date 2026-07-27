@@ -1,0 +1,190 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import Disclosure from '@/components/Disclosure.astro';
+import DonateBand from '@/components/DonateBand.astro';
+import VoiceCard from '@/components/VoiceCard.astro';
+import Icon from '@/components/Icon.astro';
+import Button from '@/components/Button.astro';
+import { donation } from '@/data/site';
+import { sayings } from '@/data/voices';
+
+import childrenPhoto from '@/assets/photos/orphanage-children.jpg';
+import groupPhoto from '@/assets/photos/orphanage-group.jpg';
+
+const homes = [
+  { name: 'Aghosh (Alkhidmat)', kind: 'Orphanage' },
+  { name: 'SOS Children’s Villages', kind: 'Orphanage' },
+  { name: 'Edhi Foundation', kind: 'Orphanage & welfare' },
+  { name: 'Ghauri', kind: 'Orphanage' },
+  { name: 'Kafalat Ghar', kind: 'Orphanage' },
+  { name: 'Waduha', kind: 'Orphanage' },
+  { name: 'Old-age homes', kind: 'Elderly care' },
+  { name: 'Special-needs centres', kind: 'Inclusion' },
+  { name: 'Thalassemia centres', kind: 'Clinical support' },
+  { name: 'Refugee camps', kind: 'Displacement' },
+];
+
+const drives = [
+  {
+    icon: 'basket' as const,
+    title: 'Ramadan ration & iftar',
+    body: 'Ration bags sized to feed a household through half the month, plus suhoor and iftar meals. Over a thousand people were served at a single iftar in March 2025.',
+  },
+  {
+    icon: 'heart' as const,
+    title: 'Orphanage & old-age home visits',
+    body: 'Medical check-ups, food, toys, educational material — and time, which the residents of an old-age home tend to name first when asked what they were short of.',
+  },
+  {
+    icon: 'droplet' as const,
+    title: 'Water & heat relief',
+    body: 'Water distribution through the summer, paired with heatstroke awareness. Heat is a medical emergency that does not present as one.',
+  },
+  {
+    icon: 'shield' as const,
+    title: 'Winter clothing',
+    body: 'Coats, blankets, sweaters and essentials, collected and distributed before the cold rather than during it.',
+  },
+];
+---
+
+<BaseLayout
+  title="Welfare Drives"
+  description="Ramadan ration and iftar, orphanage and old-age home visits, food, winter clothing and clean water — over 30,000 one-time meals distributed since 2024."
+>
+  <PageHero
+    eyebrow="30,000+ one-time meals distributed"
+    title="Welfare Drives"
+    lead="Not everything a community needs is medical. RAVISH runs the food, the ration, the clothing and the visits — partly because the same families need them, and partly because a group of students showing up with time is worth something on its own."
+  />
+
+  <section class="band-paper band" aria-labelledby="drives-title">
+    <div class="shell">
+      <SectionHead id="drives-title" eyebrow="The drives" title="What runs, and when" />
+
+      <ul class="mt-14 grid gap-6 md:grid-cols-2">
+        {
+          drives.map((drive, i) => (
+            <li class="card flex gap-5 p-7" data-reveal="rise" style={`--reveal-delay:${i * 85}`}>
+              <span class="card-edge" aria-hidden="true" />
+              <span
+                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-crimson"
+                style="background:color-mix(in oklab, var(--color-crimson) 7%, transparent)"
+              >
+                <Icon name={drive.icon} size={22} />
+              </span>
+              <div>
+                <h3 class="display-h3 text-crimson">{drive.title}</h3>
+                <p class="mt-2.5 text-small leading-relaxed text-ash">{drive.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+
+      <!-- Ramadan tiers -->
+      <div class="card mt-10 grid gap-8 p-8 md:p-10 lg:grid-cols-[1fr_1fr]" data-reveal="rise-lg">
+        <div>
+          <p class="eyebrow text-crimson">Ramadan Relief Campaign</p>
+          <h3 class="display-h2 mt-4 text-crimson">Two concrete things to fund</h3>
+          <p class="mt-5 measure text-small leading-relaxed text-ash">
+            Most giving to RAVISH goes into a general fund and is allocated activity by activity. Ramadan
+            is the exception — the units are fixed, so you can pay for exactly one of them and know what
+            it did.
+          </p>
+          <Button href="/donate" icon="arrowRight" class="mt-7">Give a ration bag</Button>
+        </div>
+        <ul class="flex flex-col gap-4">
+          {
+            donation.ramadan.map((tier) => (
+              <li class="rounded-[12px] p-6" style="background:var(--color-paper)">
+                <p class="font-display text-[2rem] leading-none font-semibold text-crimson">{tier.amount}</p>
+                <p class="mt-3 text-body font-semibold text-ash">{tier.label}</p>
+                <p class="mt-1.5 text-small text-muted">{tier.note}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- where -->
+  <section class="band-paper-deep band" aria-labelledby="homes-title">
+    <div class="shell">
+      <div class="grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16">
+        <div>
+          <SectionHead
+            id="homes-title"
+            eyebrow="Where the visits go"
+            title="Homes, centres and camps"
+            lead="These are the institutions RAVISH cabinets visit repeatedly, rather than once for a photograph."
+          />
+
+          <div class="mt-10">
+            <Disclosure peek="16rem" moreLabel="See them all" lessLabel="Show fewer" count={`${homes.length} places`} veil="paper-deep" align="start">
+              <ul class="flex flex-col divide-y divide-line border-y border-line">
+                {
+                  homes.map((home) => (
+                    <li class="flex items-baseline justify-between gap-4 py-3.5">
+                      <span class="text-body text-ash">{home.name}</span>
+                      <span class="shrink-0 text-caption text-muted">{home.kind}</span>
+                    </li>
+                  ))
+                }
+              </ul>
+            </Disclosure>
+          </div>
+
+          <div class="mt-10 rounded-[14px] p-7" style="background:var(--color-paper)">
+            <p lang="ur" class="text-[1.375rem] text-crimson" style="line-height:2.2">{sayings[2].urdu}</p>
+            <p class="mt-2 text-small text-muted italic">“{sayings[2].english}”</p>
+            <p class="mt-4 text-caption text-muted">
+              RAVISH FMH, after a visit to Kafalat Ghar — July 2025
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-6">
+          <figure class="m-0" data-reveal="rise-lg">
+            <div class="img-frame card overflow-hidden rounded-[18px] p-0">
+              <Image
+                src={childrenPhoto}
+                alt="Children at an orphanage visited by RAVISH volunteers"
+                widths={[400, 640]}
+                sizes="(min-width:1024px) 46vw, 92vw"
+                quality={84}
+                class="aspect-[4/3] w-full object-cover"
+              />
+            </div>
+            <figcaption class="mt-3 text-caption text-muted">On an orphanage visit.</figcaption>
+          </figure>
+
+          <VoiceCard
+            quote="There's something deeply humbling about being surrounded by so much light in a place that has seen its share of struggle. We came to give, but left feeling incredibly full."
+            attribution="RAVISH volunteers"
+            context="Orphanage visit"
+          />
+
+          <figure class="m-0" data-reveal="rise-lg">
+            <div class="img-frame card overflow-hidden rounded-[18px] p-0">
+              <Image
+                src={groupPhoto}
+                alt="RAVISH volunteers and residents together after a welfare visit"
+                widths={[400, 640]}
+                sizes="(min-width:1024px) 46vw, 92vw"
+                quality={82}
+                class="aspect-[16/10] w-full object-cover"
+              />
+            </div>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <DonateBand compact />
+</BaseLayout>

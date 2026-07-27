@@ -1,0 +1,155 @@
+---
+import { site, clinic, footerNav, statusDisclosure } from '@/data/site';
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+
+const year = new Date().getFullYear();
+const mapQuery = encodeURIComponent(`${clinic.address}, Lahore, Pakistan`);
+---
+
+<footer class="band-deep">
+  <div class="shell py-16 md:py-20">
+    <div class="grid gap-12 lg:grid-cols-[1.15fr_2fr]">
+      <!-- identity + contact -->
+      <div>
+        <!-- Same badge as the header. It is a knockout on cream, so it is
+             masked to a circle and reads as a warm disc on the deep ground. -->
+        <a href="/" class="flex items-center gap-3.5" aria-label={`${site.publicName} — home`}>
+          <Logo variant="badge" size={62} class="rounded-full" />
+          <span class="flex flex-col leading-none">
+            <span class="font-display text-[1.75rem] font-semibold tracking-[0.13em] text-paper">RAVISH</span>
+            <span class="mt-1 text-[0.6875rem] font-medium tracking-[0.055em] text-gold uppercase">
+              The path of health
+            </span>
+          </span>
+        </a>
+
+        <p lang="ur" class="mt-6 text-[1.0625rem] text-gold/90" style="line-height:2.2">
+          {site.tagline}
+        </p>
+        <p class="mt-1 text-small text-paper/65 italic">{site.taglineEnglish}</p>
+
+        <dl class="mt-8 flex flex-col gap-4 text-small">
+          <div class="flex items-start gap-3">
+            <Icon name="pin" size={17} class="mt-0.5 shrink-0 text-saffron" />
+            <div>
+              <dt class="sr-only">Clinic address</dt>
+              <dd>
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-paper/85 transition-colors duration-200 hover:text-gold"
+                >
+                  {clinic.name} — {clinic.address}
+                  <Icon name="arrowUpRight" size={13} class="ml-1 inline" />
+                </a>
+              </dd>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <Icon name="mail" size={17} class="mt-0.5 shrink-0 text-saffron" />
+            <div>
+              <dt class="sr-only">Email</dt>
+              <dd>
+                <a
+                  href={`mailto:${site.email}`}
+                  class="text-paper/85 transition-colors duration-200 hover:text-gold"
+                >
+                  {site.email}
+                </a>
+              </dd>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <Icon name="phone" size={17} class="mt-0.5 shrink-0 text-saffron" />
+            <div>
+              <dt class="sr-only">Phone</dt>
+              <dd>
+                <a
+                  href={`tel:${site.phoneHref}`}
+                  class="text-paper/85 transition-colors duration-200 hover:text-gold"
+                >
+                  {site.phone}
+                </a>
+              </dd>
+            </div>
+          </div>
+        </dl>
+
+        <div class="mt-8 flex items-center gap-2.5">
+          <a
+            href={site.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex h-11 w-11 items-center justify-center rounded-full border border-paper/20 text-paper/80 transition-all duration-250 hover:border-gold/60 hover:text-gold"
+            aria-label="RAVISH on Instagram"
+          >
+            <Icon name="instagram" size={19} />
+          </a>
+          <a
+            href={site.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex h-11 w-11 items-center justify-center rounded-full border border-paper/20 text-paper/80 transition-all duration-250 hover:border-gold/60 hover:text-gold"
+            aria-label="RAVISH on LinkedIn"
+          >
+            <Icon name="linkedin" size={19} />
+          </a>
+          <a
+            href={`mailto:${site.email}`}
+            class="flex h-11 w-11 items-center justify-center rounded-full border border-paper/20 text-paper/80 transition-all duration-250 hover:border-gold/60 hover:text-gold"
+            aria-label={`Email ${site.publicName}`}
+          >
+            <Icon name="mail" size={19} />
+          </a>
+        </div>
+      </div>
+
+      <!-- link columns -->
+      <div class="grid gap-10 sm:grid-cols-3">
+        {
+          footerNav.map((group) => (
+            <nav aria-labelledby={`foot-${group.heading.replace(/\s+/g, '-')}`}>
+              <h2 id={`foot-${group.heading.replace(/\s+/g, '-')}`} class="eyebrow mb-5 text-gold">
+                {group.heading}
+              </h2>
+              <ul class="flex flex-col gap-2.5">
+                {group.links.map((link) => (
+                  <li>
+                    <a
+                      href={link.href}
+                      class="text-small text-paper/78 transition-colors duration-200 hover:text-gold"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))
+        }
+      </div>
+    </div>
+
+    <hr class="mt-14 mb-8 border-0 h-px bg-paper/12" />
+
+    <!-- status disclosure. Small, but readable, and never greyed out. -->
+    <div class="grid gap-8 md:grid-cols-[1.6fr_1fr] md:items-start">
+      <p class="max-w-[62ch] text-small leading-relaxed text-paper/72">
+        <strong class="font-semibold text-paper/90">About RAVISH's status.</strong>
+        {' '}{statusDisclosure.short} It was formed by medical students to spread health awareness and
+        help the less fortunate. Because RAVISH is not a registered charity, it cannot issue
+        tax-exempt receipts.{' '}
+        <a href="/donate#status" class="text-gold underline decoration-gold/40 underline-offset-2 hover:decoration-gold">
+          Read the full disclosure
+        </a>.
+      </p>
+      <p class="text-caption text-paper/55 md:text-right">
+        © {year} {site.publicName}. Founded {site.founded} at {site.college}, {site.hq}.
+      </p>
+    </div>
+  </div>
+
+  <div class="bar-crimson h-[5px] w-full" aria-hidden="true"></div>
+</footer>

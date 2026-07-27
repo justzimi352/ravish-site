@@ -1,0 +1,53 @@
+---
+import Icon from './Icon.astro';
+import type { IconName } from './icons';
+
+interface Props {
+  href?: string;
+  type?: 'button' | 'submit';
+  variant?: 'primary' | 'outline' | 'quiet' | 'on-silk';
+  size?: 'md' | 'lg';
+  icon?: IconName;
+  iconStart?: IconName;
+  class?: string;
+  external?: boolean;
+  'aria-label'?: string;
+}
+
+const {
+  href,
+  type = 'button',
+  variant = 'primary',
+  size = 'md',
+  icon,
+  iconStart,
+  class: className = '',
+  external = false,
+  ...rest
+} = Astro.props;
+
+const variantClass = {
+  primary: 'btn-primary',
+  outline: 'btn-outline',
+  quiet: 'btn-quiet',
+  'on-silk': 'btn-on-silk',
+}[variant];
+
+const sizeClass = size === 'lg' ? 'px-7 py-4 text-body min-h-[3.25rem]' : '';
+const cls = `btn ${variantClass} ${sizeClass} ${className}`;
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+  class={cls}
+  href={href}
+  type={href ? undefined : type}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener noreferrer' : undefined}
+  {...rest}
+>
+  {iconStart && <Icon name={iconStart} size={17} />}
+  <span><slot /></span>
+  {icon && <Icon name={icon} size={17} />}
+  {external && !icon && <Icon name="arrowUpRight" size={15} />}
+</Tag>
